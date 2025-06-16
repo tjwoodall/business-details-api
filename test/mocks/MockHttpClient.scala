@@ -20,18 +20,52 @@ import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.Writes
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
+import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
+import uk.gov.hmrc.http.client.Url._
+
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait MockHttpClient extends MockFactory {
 
-  val mockHttpClient: HttpClient = mock[HttpClient]
+  val mockHttpClient: HttpClientV2 = mock[HttpClientV2]
 
   object MockedHttpClient extends Matchers {
 
+    def get[T](url: Url,
+               parameters: Seq[(String, String)] = Seq.empty,
+               requiredHeaders: Seq[(String, String)] = Seq.empty,
+               excludedHeaders: Seq[(String, String)] = Seq.empty)(implicit
+        httpReads: HttpReads[T],
+        hc: HeaderCarrier,
+        ec: ExecutionContext): CallHandler[Future[T]] = {
+
+      val mockRequestBuilder = mock[RequestBuilder]
+
+      (mockHttpClient
+        .get(_: Url)(_: HeaderCarrier))
+        .expects(url, hc)
+        .returning(mockRequestBuilder)
+
+      (mockRequestBuilder.withQueryStringParameters _)
+        .expects(parameters: _*)
+        .returning(mockRequestBuilder)
+
+      (mockRequestBuilder.setHeader _)
+        .expects(*)
+        .onCall { (headers: Seq[(String, String)]) =>
+          headers should contain allElementsOf requiredHeaders
+          headers should contain noneElementsOf excludedHeaders
+          mockRequestBuilder
+        }
+
+      (mockRequestBuilder
+        .execute[T](_: HttpReads[T], _: HeaderCarrier, _: ExecutionContext))
+        .expects(httpReads, hc, ec)
+    }
+
     def get[T](url: String,
-               config: HeaderCarrier.Config,
                parameters: Seq[(String, String)] = Seq.empty,
                requiredHeaders: Seq[(String, String)] = Seq.empty,
                excludedHeaders: Seq[(String, String)] = Seq.empty): CallHandler[Future[T]] = {

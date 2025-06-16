@@ -20,7 +20,7 @@ import sbt.*
 
 object AppDependencies {
 
-  val bootstrapPlayVersion = "8.1.0"
+  val bootstrapPlayVersion = "9.13.0"
 
   val compile: Seq[ModuleID] = Seq(
     ws,
@@ -29,7 +29,8 @@ object AppDependencies {
     "com.chuusai"                  %% "shapeless"                 % "2.4.0-M1",
     "com.neovisionaries"            % "nv-i18n"                   % "1.29",
     "com.fasterxml.jackson.module" %% "jackson-module-scala"      % "2.15.2",
-    "com.github.jknack"             % "handlebars"                % "4.3.1"
+    "com.github.jknack"             % "handlebars"                % "4.3.1",
+    "uk.gov.hmrc"                  %% "http-client"               % "2.17.0"
   )
 
   def test(scope: String = "test, it"): Seq[sbt.ModuleID] = Seq(

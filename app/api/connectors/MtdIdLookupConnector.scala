@@ -18,10 +18,11 @@ package api.connectors
 
 import api.connectors.httpparsers.MtdIdLookupHttpParser.mtdIdLookupHttpReads
 import config.AppConfig
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.http.client.HttpClientV2
 
 object MtdIdLookupConnector {
   case class Error(statusCode: Int) extends AnyVal
@@ -31,11 +32,14 @@ object MtdIdLookupConnector {
 }
 
 @Singleton
-class MtdIdLookupConnector @Inject() (http: HttpClient, appConfig: AppConfig) {
+class MtdIdLookupConnector @Inject() (httpClientV2: HttpClientV2, appConfig: AppConfig) {
 
   def getMtdId(nino: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MtdIdLookupConnector.Outcome] = {
 
-    http.GET[MtdIdLookupConnector.Outcome](s"${appConfig.mtdIdBaseUrl}/mtd-identifier-lookup/nino/$nino")
+    // http.GET[MtdIdLookupConnector.Outcome](s"${appConfig.mtdIdBaseUrl}/mtd-identifier-lookup/nino/$nino")
+    httpClientV2
+      .get(url"${appConfig.mtdIdBaseUrl}/mtd-identifier-lookup/nino/$nino")
+      .execute[MtdIdLookupConnector.Outcome]
   }
 
 }

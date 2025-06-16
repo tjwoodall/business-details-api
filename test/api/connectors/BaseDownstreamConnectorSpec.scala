@@ -21,7 +21,8 @@ import config.{AppConfig, MockAppConfig}
 import mocks.MockHttpClient
 import org.scalatest.Assertion
 import support.UnitSpec
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
@@ -59,8 +60,8 @@ class BaseDownstreamConnectorSpec extends UnitSpec with MockHttpClient with Mock
     HeaderCarrier(otherHeaders = inputHeaders)
 
   val connector: BaseDownstreamConnector = new BaseDownstreamConnector {
-    val http: HttpClient     = mockHttpClient
-    val appConfig: AppConfig = mockAppConfig
+    val httpClientV2: HttpClientV2 = mockHttpClient
+    val appConfig: AppConfig       = mockAppConfig
   }
 
   private def uri(apiContractHeaders: Seq[(String, String)] = standardContractHeaders, passThroughHeaderNames: Seq[String] = Nil) =
