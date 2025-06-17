@@ -24,6 +24,7 @@ import utils.DateUtils.nowAsUtc
 import v1.retrieveBusinessDetails.model.response.downstream.RetrieveBusinessDetailsDownstreamResponse
 
 import scala.concurrent.Future
+import utils.UrlHelper._
 
 class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
 
@@ -38,7 +39,7 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
 
         private val outcome = Right(ResponseWrapper(correlationId, response))
 
-        willGet(url = s"$baseUrl/registration/business-details/nino/${nino.nino}") returns
+        willGet(url = s"$baseUrl/registration/business-details/nino/${nino.nino}".toUrl) returns
           Future.successful(outcome)
 
         await(connector.retrieveBusinessDetails(nino)) shouldBe outcome
@@ -49,7 +50,7 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
 
         private val outcome = Right(ResponseWrapper(correlationId, response))
 
-        willGet(url = s"$baseUrl/registration/business-details/nino/${nino.nino}") returns
+        willGet(url = s"$baseUrl/registration/business-details/nino/${nino.nino}".toUrl) returns
           Future.successful(outcome)
 
         await(connector.retrieveBusinessDetails(nino)) shouldBe outcome
@@ -69,7 +70,7 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
         private val outcome: Right[Nothing, ResponseWrapper[RetrieveBusinessDetailsDownstreamResponse]] =
           Right(ResponseWrapper(correlationId, response))
 
-        willGet(url = s"$baseUrl/etmp/RESTAdapter/itsa/taxpayer/business-details?nino=${nino.nino}") returns
+        willGet(url = s"$baseUrl/etmp/RESTAdapter/itsa/taxpayer/business-details?nino=${nino.nino}".toUrl) returns
           Future.successful(outcome)
 
         await(connector.retrieveBusinessDetails(nino)) shouldBe outcome
@@ -81,7 +82,7 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
     _: ConnectorTest =>
 
     protected val connector: RetrieveBusinessDetailsConnector =
-      new RetrieveBusinessDetailsConnector(http = mockHttpClient, appConfig = mockAppConfig)
+      new RetrieveBusinessDetailsConnector(httpClientV2 = mockHttpClient, appConfig = mockAppConfig)
 
   }
 

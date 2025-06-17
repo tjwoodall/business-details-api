@@ -20,8 +20,11 @@ import api.models.outcomes.ResponseWrapper
 import config.{AppConfig, MockAppConfig}
 import mocks.MockHttpClient
 import org.scalatest.Assertion
+import play.api.libs.json.Json
 import support.UnitSpec
 import uk.gov.hmrc.http.client.HttpClientV2
+
+import java.net.URL
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -31,12 +34,16 @@ class BaseDownstreamConnectorSpec extends UnitSpec with MockHttpClient with Mock
   self =>
 
   case class Result(value: Int)
+  case class SomeError(message: String)
+  type OutcomeType[A] = Either[SomeError, ResponseWrapper[A]]
 
-  private val baseUrl     = "http://test-BaseUrl"
-  private val path        = "some/url"
-  private val absoluteUrl = s"$baseUrl/$path"
-  private val body        = "body"
-  private val userAgent   = "this-api"
+  private val baseUrl = "http://test-BaseUrl"
+  private val path    = "some/url"
+  // private val absoluteUrl = s"$baseUrl/$path"
+  val absoluteUrl = new URL(s"$baseUrl/$path")
+  // private val body        = "body"
+  private val body      = Json.obj("field" -> "value")
+  private val userAgent = "this-api"
 
   private implicit val correlationId: String = "someCorrelationId"
   private val outcome                        = Right(ResponseWrapper(correlationId, Result(2)))
@@ -110,6 +117,26 @@ class BaseDownstreamConnectorSpec extends UnitSpec with MockHttpClient with Mock
       }
     }
 
+//    "post is called" must {
+//      object Post extends RequestMethodCaller {
+//        def makeCall(additionalRequiredHeaders: Seq[(String, String)] = Nil, additionalExcludedHeaders: Seq[(String, String)] = Nil): Assertion = {
+//          implicit val hc: HeaderCarrier = headerCarrierForInput()
+//
+//          MockedHttpClient.post(
+//            absoluteUrl,
+//            headerCarrierConfig,
+//            body,
+//            requiredHeaders = standardContractHeadersWith(additionalRequiredHeaders) :+ contentTypeHeader,
+//            excludedHeaders = additionalExcludedHeaders
+//          ) returns Future.successful(outcome)
+//
+//          await(connector.post(body, uri())) shouldBe outcome
+//        }
+//      }
+//
+//      behave like sendsRequest(Post)
+//    }
+
     "post is called" must {
       object Post extends RequestMethodCaller {
         def makeCall(additionalRequiredHeaders: Seq[(String, String)] = Nil, additionalExcludedHeaders: Seq[(String, String)] = Nil): Assertion = {
@@ -177,10 +204,11 @@ class BaseDownstreamConnectorSpec extends UnitSpec with MockHttpClient with Mock
         def makeCall(additionalRequiredHeaders: Seq[(String, String)] = Nil, additionalExcludedHeaders: Seq[(String, String)] = Nil): Assertion = {
           implicit val hc: HeaderCarrier = headerCarrierForInput()
           val qps: Seq[(String, String)] = List("param1" -> "value1")
-
+          val urlWithParams              = connector.buildUrlWithParams(s"$baseUrl/$path", qps)
+          val fullUrl                    = new URL(urlWithParams)
           MockedHttpClient
             .get(
-              absoluteUrl,
+              fullUrl,
               headerCarrierConfig,
               parameters = qps,
               requiredHeaders = standardContractHeadersWith(additionalRequiredHeaders),

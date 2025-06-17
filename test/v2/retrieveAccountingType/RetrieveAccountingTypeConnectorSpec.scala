@@ -24,7 +24,7 @@ import play.api.Configuration
 import v2.common.models.AccountingType
 import v2.retrieveAccountingType.model.request._
 import v2.retrieveAccountingType.model.response.RetrieveAccountingTypeResponse
-
+import utils.UrlHelper._
 import scala.concurrent.Future
 
 class RetrieveAccountingTypeConnectorSpec extends ConnectorSpec {
@@ -56,7 +56,7 @@ class RetrieveAccountingTypeConnectorSpec extends ConnectorSpec {
 
           MockedAppConfig.featureSwitches returns Configuration("passIntentHeader.enabled" -> passIntentHeaderFlag)
 
-          willGet(s"$baseUrl/itsd/income-sources/v2/$nino", mappedQueryParams.toList).returns(Future.successful(outcome))
+          willGet(s"$baseUrl/itsd/income-sources/v2/$nino".toUrl, mappedQueryParams.toList).returns(Future.successful(outcome))
 
           val result: DownstreamOutcome[RetrieveAccountingTypeResponse] = await(connector.retrieveAccountingType(request))
           result shouldBe outcome
@@ -77,7 +77,7 @@ class RetrieveAccountingTypeConnectorSpec extends ConnectorSpec {
 
           MockedAppConfig.featureSwitches returns Configuration("passIntentHeader.enabled" -> passIntentHeaderFlag)
 
-          willGet(s"$baseUrl/itsd/income-sources/v2/$nino", mappedQueryParams.toList).returns(Future.successful(outcome))
+          willGet(s"$baseUrl/itsd/income-sources/v2/$nino".toUrl, mappedQueryParams.toList).returns(Future.successful(outcome))
 
           val result: DownstreamOutcome[RetrieveAccountingTypeResponse] = await(connector.retrieveAccountingType(request))
           result shouldBe outcome

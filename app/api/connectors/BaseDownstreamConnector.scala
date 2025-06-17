@@ -63,8 +63,8 @@ trait BaseDownstreamConnector extends Logging {
       ec: ExecutionContext,
       hc: HeaderCarrier,
       httpReads: HttpReads[DownstreamOutcome[Resp]],
-      correlationId: String,
-      httpClientV2: HttpClientV2
+      correlationId: String
+      // httpClientV2: HttpClientV2
   ): Future[DownstreamOutcome[Resp]] = {
 
     val strategy = uri.strategy
@@ -74,7 +74,7 @@ trait BaseDownstreamConnector extends Logging {
       result <- httpClientV2
         .post(url"${getBackendUri(uri.path, strategy)}")
         .withBody(Json.toJson(body))
-        .setHeader(headers: _*) // works now, because headers is Seq[(String, String)]
+        .setHeader(headers: _*)
         .execute[DownstreamOutcome[Resp]]
     } yield result
   }
@@ -105,7 +105,6 @@ trait BaseDownstreamConnector extends Logging {
       hc: HeaderCarrier,
       httpReads: HttpReads[DownstreamOutcome[Resp]],
       correlationId: String
-      // httpClientV2: HttpClientV2
   ): Future[DownstreamOutcome[Resp]] = {
 
     val strategy = uri.strategy
@@ -146,8 +145,8 @@ trait BaseDownstreamConnector extends Logging {
       ec: ExecutionContext,
       hc: HeaderCarrier,
       httpReads: HttpReads[DownstreamOutcome[Resp]],
-      correlationId: String,
-      httpClientV2: HttpClientV2
+      correlationId: String
+      // httpClientV2: HttpClientV2
   ): Future[DownstreamOutcome[Resp]] = {
 
     val strategy = uri.strategy
@@ -229,7 +228,7 @@ trait BaseDownstreamConnector extends Logging {
     }
   }
 
-  private def buildUrlWithParams(baseUrl: String, queryParams: Seq[(String, String)]): String = {
+  def buildUrlWithParams(baseUrl: String, queryParams: Seq[(String, String)]): String = {
     val encodedParams = queryParams
       .map { case (k, v) =>
         s"${URLEncoder.encode(k, "UTF-8")}=${URLEncoder.encode(v, "UTF-8")}"

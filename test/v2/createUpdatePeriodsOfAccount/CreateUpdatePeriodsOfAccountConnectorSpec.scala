@@ -22,7 +22,7 @@ import api.models.errors.{DownstreamErrorCode, DownstreamErrors}
 import api.models.outcomes.ResponseWrapper
 import v2.createUpdatePeriodsOfAccount.request.CreateUpdatePeriodsOfAccountRequest
 import v2.fixtures.CreateUpdatePeriodsOfAccountFixtures.minimumRequestBodyModel
-
+import utils.UrlHelper._
 import scala.concurrent.Future
 
 class CreateUpdatePeriodsOfAccountConnectorSpec extends ConnectorSpec {
@@ -43,7 +43,7 @@ class CreateUpdatePeriodsOfAccountConnectorSpec extends ConnectorSpec {
       "the downstream request is successful" in new HipTest with Test {
         val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
-        willPut(downstreamUri, minimumRequestBodyModel).returns(Future.successful(outcome))
+        willPut(downstreamUri.toUrl, minimumRequestBodyModel).returns(Future.successful(outcome))
 
         val result: DownstreamOutcome[Unit] = await(connector.createUpdate(request))
         result shouldBe outcome
@@ -55,7 +55,7 @@ class CreateUpdatePeriodsOfAccountConnectorSpec extends ConnectorSpec {
         val downstreamErrorResponse: DownstreamErrors                 = DownstreamErrors.single(DownstreamErrorCode("SOME_ERROR"))
         val outcome: Left[ResponseWrapper[DownstreamErrors], Nothing] = Left(ResponseWrapper(correlationId, downstreamErrorResponse))
 
-        willPut(downstreamUri, minimumRequestBodyModel).returns(Future.successful(outcome))
+        willPut(downstreamUri.toUrl, minimumRequestBodyModel).returns(Future.successful(outcome))
 
         val result: DownstreamOutcome[Unit] = await(connector.createUpdate(request))
         result shouldBe outcome
@@ -67,7 +67,7 @@ class CreateUpdatePeriodsOfAccountConnectorSpec extends ConnectorSpec {
     protected val downstreamUri: String = s"$baseUrl/itsd/income-sources/$nino/periods-of-account/$businessId?taxYear=${taxYear.asTysDownstream}"
 
     protected val connector: CreateUpdatePeriodsOfAccountConnector = new CreateUpdatePeriodsOfAccountConnector(
-      http = mockHttpClient,
+      httpClientV2 = mockHttpClient,
       appConfig = mockAppConfig
     )
 

@@ -23,6 +23,7 @@ import org.scalamock.handlers.CallHandler
 import support.UnitSpec
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.net.URL
 import java.util.Base64
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -55,7 +56,7 @@ trait ConnectorSpec extends UnitSpec {
 
     protected def intent: Option[String] = None
 
-    protected def willGet[T](url: String, parameters: Seq[(String, String)] = Nil): CallHandler[Future[T]] = {
+    protected def willGet[T](url: URL, parameters: Seq[(String, String)] = Nil): CallHandler[Future[T]] = {
       MockedHttpClient
         .get(
           url = url,
@@ -66,7 +67,7 @@ trait ConnectorSpec extends UnitSpec {
         )
     }
 
-    protected def willPost[BODY, T](url: String, body: BODY): CallHandler[Future[T]] = {
+    protected def willPost[BODY, T](url: URL, body: BODY): CallHandler[Future[T]] = {
       MockedHttpClient
         .post(
           url = url,
@@ -77,7 +78,7 @@ trait ConnectorSpec extends UnitSpec {
         )
     }
 
-    protected def willPut[BODY, T](url: String, body: BODY): CallHandler[Future[T]] = {
+    protected def willPut[BODY, T](url: URL, body: BODY): CallHandler[Future[T]] = {
       MockedHttpClient
         .put(
           url = url,
@@ -88,7 +89,7 @@ trait ConnectorSpec extends UnitSpec {
         )
     }
 
-    protected def willDelete[T](url: String): CallHandler[Future[T]] = {
+    protected def willDelete[T](url: URL): CallHandler[Future[T]] = {
       MockedHttpClient
         .delete(
           url = url,
