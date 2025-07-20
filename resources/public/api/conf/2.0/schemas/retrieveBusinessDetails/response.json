@@ -121,7 +121,7 @@
           "example": "2023-24"
         }
       },
-      "taxYearOfChoice": [
+      "required": [
         "quarterlyPeriodType",
         "taxYear1"
       ]
