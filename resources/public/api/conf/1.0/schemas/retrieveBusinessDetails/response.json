@@ -30,7 +30,6 @@
       "type": "string",
       "description": "{{#unless (releasedInProduction 'retrieveAdditionalFields')}}[Test only] {{/unless}}Year of migration.",
       "pattern": "^(\\d{4})$",
-      "format": "yyyy",
       "example": "2022"
     },
     "firstAccountingPeriodStartDate": {
@@ -60,8 +59,8 @@
           "description": "First tax year for the income source.",
           "example": "2018-19",
           "format": "YYYY-YY",
-          "minimum": 4,
-          "maximum": 4
+          "minimum": 7,
+          "maximum": 7
         },
         "latencyIndicator1": {
           "type": "string",
@@ -79,8 +78,8 @@
           "description": "Second tax year for the income source.",
           "example": "2019-20",
           "format": "YYYY-YY",
-          "minimum": 4,
-          "maximum": 4
+          "minimum": 7,
+          "maximum": 7
         },
         "latencyIndicator2": {
           "type": "string",
