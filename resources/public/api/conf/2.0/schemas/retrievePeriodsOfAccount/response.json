@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Retrieve Periods of Account Response",
+  "description": "Retrieve Periods of Account Response",
+  "type": "object",
+  "properties": {
+    "submittedOn": {
+      "type": "string",
+      "description": "The date and time of the submission. Must conform to the format YYYY-MM-DDThh:mm:ss.SSSZ",
+      "format": "date-time",
+      "example": "2025-08-24T14:15:22.802Z"
+    },
+    "periodsOfAccount": {
+      "type": "boolean",
+      "description": "Indicates whether the customer has periods of account.\n\nIf this value is true, then periodsOfAccountDates will be returned.",
+      "example": true
+    },
+    "periodsOfAccountDates": {
+      "type": "array",
+      "description": "List of periods of account. These will be returned if a customer has submitted periods of account.\n\nIf periodsOfAccount is set to false, then this field will not be returned.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "description": "The start date of the period of account. Must conform to the format YYYY-MM-DD",
+            "format": "date",
+            "example": "2025-04-06"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "The end date of the period of account. Must conform to the format YYYY-MM-DD",
+            "format": "date",
+            "example": "2025-07-05"
+          }
+        },
+        "required": ["startDate", "endDate"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["submittedOn", "periodsOfAccount"],
+  "additionalProperties": false
+}
