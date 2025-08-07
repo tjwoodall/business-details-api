@@ -2,7 +2,7 @@ openapi: "3.0.3"
 
 info:
   version: "2.0"
-  title: Business Details (MTD)
+  title: Business Details (MTD){{#maybeTestOnly "2.0 api-released-in-production"}}{{/maybeTestOnly}}
   description: |
     The following groups of endpoints are stateful in the Sandbox:
       * [Accounting Type](#tag/Accounting-Type)
