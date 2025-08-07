@@ -1,5 +1,5 @@
 delete:
-  summary: Withdraw Late Accounting Date Rule
+  summary: Withdraw Late Accounting Date Rule{{#maybeTestOnly "2.0 withdraw-late-accounting-date-rule"}}{{/maybeTestOnly}}
   description: |
     Allows a customer to withdraw an election to disapply the automatic Late Accounting Date Rule treatment for a given tax year. This setting cannot be changed after finalisation (except when submitting post finalisation amendments) and will remain in place for 5 years. A National Insurance number, business ID and tax year must be provided.
     
