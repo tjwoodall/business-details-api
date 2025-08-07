@@ -1,5 +1,5 @@
 post:
-  summary: Disapply Late Accounting Date Rule
+  summary: Disapply Late Accounting Date Rule{{#maybeTestOnly "2.0 disapply-late-accounting-date-rule"}}{{/maybeTestOnly}}
   description: |
     Allows a customer to submit an election to disapply the automatic Late Accounting Date Rule treatment for a given tax year. A National Insurance number, business ID and tax year must be provided.
   
