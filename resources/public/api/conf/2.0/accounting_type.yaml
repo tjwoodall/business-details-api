@@ -1,13 +1,13 @@
 get:
   $ref: "./retrieve_accounting_type.yaml"
-  summary: Retrieve Accounting Type
+  summary: Retrieve Accounting Type  [test only]
   security:
     - User-Restricted:
         - read:self-assessment
 
 put:
   $ref: "./update_accounting_type.yaml"
-  summary: Update Accounting Type
+  summary: Update Accounting Type  [test only]
   security:
     - User-Restricted:
         - write:self-assessment
