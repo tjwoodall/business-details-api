@@ -1,4 +1,4 @@
-summary: "Retrieve Accounting Type [test only]"
+summary: Retrieve Accounting Type
 description: |
   This endpoint allows a customer to retrieve the Accounting Type that they have on record. A National Insurance number, business ID and tax year must be provided.
   

@@ -1,4 +1,4 @@
-summary: "Create or Update Periods of Account [test only]"
+summary: Create or Update Periods of Account
 description: |
   This API is used to declare whether a customer has Periods of Account and can submit the Periods of Account dates.
   A National Insurance number, business ID and tax year must be provided.
@@ -16,7 +16,7 @@ description: |
 
 parameters:
   - $ref: './common/pathParameters.yaml#/components/parameters/nino'
-  - $ref: './common/pathParameters.yaml#/components/parameters/businessId'
+  - $ref: './common/pathParameters.yaml#/components/parameters/selfEmploymentBusinessId'
   - $ref: './common/pathParameters.yaml#/components/parameters/accountingTypeTaxYear'
   - $ref: './common/headers.yaml#/components/parameters/acceptJson'
   - $ref: './common/headers.yaml#/components/parameters/contentTypeJson'
