@@ -130,7 +130,7 @@
       },
       "required": [
         "quarterlyPeriodType",
-        "taxYear1"
+        "taxYearOfChoice"
       ]
     },
     "accountingPeriods": {
