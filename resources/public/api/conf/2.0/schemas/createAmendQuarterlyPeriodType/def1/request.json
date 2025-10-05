@@ -1,5 +1,4 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Create & Amend Quarterly Period Type for a Business ID",
   "description": "Create & Amend Quarterly Period Type request",
   "type": "object",

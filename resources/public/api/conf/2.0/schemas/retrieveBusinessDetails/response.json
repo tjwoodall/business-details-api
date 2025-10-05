@@ -1,5 +1,4 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Retrieve additional information for a user's business details",
   "description": "Retrieve business details response",
   "type": "object",

@@ -1,5 +1,4 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Retrieve Periods of Account Response",
   "description": "Retrieve Periods of Account Response",
   "type": "object",

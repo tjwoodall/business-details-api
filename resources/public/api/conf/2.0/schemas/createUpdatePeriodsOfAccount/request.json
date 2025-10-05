@@ -1,5 +1,4 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Create or Update Periods of Account Request",
   "description": "Create or Update Periods of Account Request",
   "type": "object",

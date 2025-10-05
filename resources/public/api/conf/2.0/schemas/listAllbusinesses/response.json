@@ -1,5 +1,4 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Retrieve a list of all business details for Subcontractor",
   "description": "Retrieve business details response",
   "type": "object",

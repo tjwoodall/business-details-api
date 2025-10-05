@@ -1,5 +1,4 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Retrieve Late Accounting Date Rule Response",
   "description": "Retrieve Late Accounting Date Rule Response",
   "type": "object",
