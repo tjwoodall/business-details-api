@@ -48,8 +48,7 @@ get:
           examples:
             example-response:
               description: Example Response
-              value:
-                $ref: './examples/retrieveBusinessDetails/response.json'
+              externalValue: './examples/retrieveBusinessDetails/response.json'
     "400":
       description: Bad request
       headers:
