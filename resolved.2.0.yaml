@@ -1,0 +1,3030 @@
+openapi: 3.0.3
+info:
+  title: Business Details (MTD)
+  description: "The following groups of endpoints are stateful in the Sandbox:\n \
+    \ * [Accounting Type](#tag/Accounting-Type)\n  * [Periods of Account](#tag/Periods-of-Account)\n\
+    \n  * [Late Accounting Date Rule](#tag/Late-Accounting-Date-Rule)\n\n\nThe following\
+    \ endpoints are stateful in the Sandbox:\n  * Retrieve Business Details\n  * List\
+    \ All Businesses\n  * Create and Amend Quarterly Period Type for a Business\n\n\
+    # Send fraud prevention data\nHMRC monitors transactions to help protect your\
+    \ customers' confidential data from criminals and fraudsters. \n\n<div class=\"\
+    govuk-warning-text warning-icon-fix\">\n  <span class=\"govuk-warning-text__icon\
+    \ warning-icon-ui-fix\" aria-hidden=\"true\">!</span>\n  <strong class=\"govuk-warning-text__text\"\
+    >\n    <span class=\"govuk-warning-text__assistive\">Warning</span>\n    You are\
+    \ required by law to submit header data for this API. This includes all associated\
+    \ APIs and endpoints.\n  </strong>\n</div>\n\n[Check the data you need to send](/guides/fraud-prevention/).\
+    \ You can also use the [Test API](/api-documentation/docs/api/service/txm-fph-validator-api/1.0)\
+    \ during initial development and as part of your quality assurance checks.\n\n\
+    # Changelog\nYou can find the changelog in the [income-tax-mtd-changelog](https://github.com/hmrc/income-tax-mtd-changelog/#readme)\
+    \ GitHub wiki.\n\n\n# Support\n\n* Direct reports of bugs or errors in Production\
+    \ or Sandbox code, or queries about HMRC business functionality (such as how a\
+    \ specific field is used by HMRC or why it is needed) to the [Software Development\
+    \ Support Team (SDST)](https://developer.service.hmrc.gov.uk/developer/support).\n\
+    * Send queries or feedback related to the design of the APIs (including recommended\
+    \ changes) using the  [income-tax-mtd-changelog](https://github.com/hmrc/income-tax-mtd-changelog/issues)\
+    \ GitHub page.\n* <a href=\"/contact/report-technical-problem?newTab=true&service=api-documentation-frontend\"\
+    \ target=\"_blank\">Is this page not working properly? (opens in new tab)</a>\n"
+  version: "2.0"
+servers:
+- url: https://test-api.service.hmrc.gov.uk
+  description: Sandbox
+- url: https://api.service.hmrc.gov.uk
+  description: Production
+paths:
+  /individuals/business/details/{nino}/list:
+    get:
+      summary: List All Businesses
+      description: "This endpoint allows a developer to retrieve all details of a\
+        \ user's business income sources. The unique account \nreference (National\
+        \ Insurance number) must be provided.\n\n### Test data\nScenario simulation\
+        \ using Gov-Test-Scenario headers is only available in the sandbox environment.\
+        \    \n\n| Header Value (Gov-Test-Scenario) | Scenario                   \
+        \                                                                      |\n\
+        |----------------------------------|--------------------------------------------------------------------------------------------------|\n\
+        | N/A - DEFAULT                    | Simulate a successful response with a\
+        \ self-employment business.                                  |\n| PROPERTY\
+        \                         | Simulate a successful response with a uk-property\
+        \ business.                                      |\n| FOREIGN_PROPERTY   \
+        \              | Simulate a successful response with a foreign-property business.\
+        \                                 |                                      \
+        \                          |\n| BUSINESS_AND_PROPERTY            | Simulate\
+        \ a successful response with a self-employment, uk-property and foreign-property\
+        \ business.|\n| UNSPECIFIED                      | Simulate a successful response\
+        \ with a property-unspecified business.                             |\n| NOT_FOUND\
+        \                        | Simulates the scenario where no data is found.\
+        \                                                   |\n| STATEFUL        \
+        \                 | Performs a stateful list.                            \
+        \                                            |\n"
+      parameters:
+      - name: nino
+        in: path
+        description: |
+          National Insurance number, in the format `AA999999A`
+        required: true
+        schema:
+          type: string
+          example: TC663795B
+      - name: Accept
+        in: header
+        description: |
+          Specifies the response format and the version of the API to be used.
+        required: true
+        schema:
+          type: string
+          enum:
+          - application/vnd.hmrc.2.0+json
+      - name: Authorization
+        in: header
+        description: |
+          An OAuth 2.0 Bearer Token with the *read:self-assessment* scope.
+        required: true
+        schema:
+          type: string
+          example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+      - name: Gov-Test-Scenario
+        in: header
+        description: |
+          Only in sandbox environment. See Test Data table for all header values.
+        required: false
+        schema:
+          type: string
+          example: "-"
+      responses:
+        "200":
+          description: Success
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                title: Retrieve a list of all business details for Subcontractor
+                required:
+                - listOfBusinesses
+                type: object
+                properties:
+                  listOfBusinesses:
+                    type: array
+                    description: An array containing the details of all the business
+                      income sources held against the specified National insurance
+                      number.
+                    items:
+                      required:
+                      - businessId
+                      - typeOfBusiness
+                      type: object
+                      properties:
+                        typeOfBusiness:
+                          type: string
+                          description: The type of business income source.
+                          example: self-employment
+                          enum:
+                          - self-employment
+                          - uk-property
+                          - foreign-property
+                          - property-unspecified
+                        businessId:
+                          pattern: "^X[a-zA-Z0-9]{1}IS[0-9]{11}$"
+                          type: string
+                          description: A unique identifier for the business income
+                            source. Previously known as selfEmploymentId.
+                          example: XAIS12345678910
+                        tradingName:
+                          type: string
+                          description: The trading name of the business.
+                          example: RCDTS
+                        links:
+                          type: array
+                          items:
+                            required:
+                            - href
+                            - method
+                            - rel
+                            type: object
+                            properties:
+                              href:
+                                type: string
+                                description: The relative url of the endpoint.
+                                example: /individuals/business/details/CX897463D/XAIS12345678910
+                              rel:
+                                type: string
+                                description: |-
+                                  A label for the endpoint, which describes how it is related to the current resource
+                                  The rel will be `self` where the action is retrieval of the same resource.
+                                enum:
+                                - retrieve-business-details
+                              method:
+                                type: string
+                                description: The HTTP method type for the endpoint.
+                                enum:
+                                - GET
+                            additionalProperties: false
+                            description: A list of endpoint links that indicate possible
+                              actions related to the current resource.
+                      additionalProperties: false
+                  links:
+                    type: array
+                    items:
+                      required:
+                      - href
+                      - method
+                      - rel
+                      type: object
+                      properties:
+                        href:
+                          type: string
+                          description: The relative url of the endpoint.
+                          example: /individuals/business/details/CX897463D/list
+                        rel:
+                          type: string
+                          description: |-
+                            A label for the endpoint, which describes how it is related to the current resource
+                            The rel will be self where the action is retrieval of the same resource.
+                          enum:
+                          - self
+                        method:
+                          type: string
+                          description: The HTTP method type for the endpoint.
+                          enum:
+                          - GET
+                      additionalProperties: false
+                      description: A list of endpoint links that indicate possible
+                        actions related to the current resource.
+                additionalProperties: false
+                description: Retrieve business details response
+              examples:
+                example-response:
+                  description: Example Response
+                  value:
+                    $ref: ./examples/listAllBusinesses/response.json
+        "400":
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value:
+                    code: FORMAT_NINO
+                    message: The provided NINO is invalid
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: "The request did not match any available Sandbox data.\
+                    \ Check that the supplied Gov-Test-Scenario is correct for \n\
+                    this endpoint version. This error will only be returned in the\
+                    \ Sandbox environment.\n"
+                  value:
+                    code: RULE_INCORRECT_GOV_TEST_SCENARIO
+                    message: The supplied Gov-Test-Scenario is not valid
+        "403":
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value:
+                    code: CLIENT_OR_AGENT_NOT_AUTHORISED
+                    message: The client or agent is not authorised
+        "404":
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    The supplied income source could not be found.
+                  value:
+                    code: MATCHING_RESOURCE_NOT_FOUND
+                    message: Matching resource not found
+      security:
+      - User-Restricted:
+        - read:self-assessment
+  /individuals/business/details/{nino}/{businessId}:
+    get:
+      summary: Retrieve Business Details
+      description: "This endpoint allows a developer to retrieve additional information\
+        \ for one of a user's business income source. The \nunique account reference\
+        \ (National Insurance number) must be provided as well as the unique business\
+        \ identifier.\n\n### Test data\nScenario simulations using <code>Gov-Test-Scenario</code>\
+        \ headers is only available in the sandbox environment.\n| Header Value (Gov-Test-Scenario)\
+        \ | Scenario |\n| --- | --- |\n| N/A - DEFAULT | Simulate a successful response\
+        \ with a self-employment business. <br/> Use the following businessId for\
+        \ this scenario: <br/> - XBIS12345678901 |\n| PROPERTY | Simulate a successful\
+        \ response with a uk-property business. <br/> Use the following businessId\
+        \ for this scenario: <br/> - XPIS12345678901 |\n| FOREIGN_PROPERTY | Simulate\
+        \ a successful response with a foreign-property business. <br/> Use the following\
+        \ businessId for this scenario: <br/> - XFIS12345678901 |\n| UNSPECIFIED |\
+        \ Simulate a successful response with a property-unspecified business. <br/>\
+        \ Use the following businessId for this scenario: <br/> - XAIS12345678901\
+        \ |\n| NOT_FOUND | Simulate a scenario where no data is found. |\n| DYNAMIC\
+        \ | Returns a dynamic response where the type of response will change corresponding\
+        \ to the businessId provided in the request: <br/> - For a response with a\
+        \ self-employment business, use businessId: <br/>   -- XBIS12345678901 (Accruals)\
+        \ <br/>   -- XBIS12345678902 (Cash) <br/> - For a response with a uk-property\
+        \ business, use businessId: <br/>   -- XPIS12345678901 (Accruals) <br/>  \
+        \ -- XPIS12345678902 (Cash) <br/> - For a response with a foreign-property\
+        \ business, use businessId: <br/>   -- XFIS12345678901 (Accruals) <br/>  \
+        \ -- XFIS12345678902 (Cash) <br/> - For a response with a property-unspecified\
+        \ business, use businessId: <br/>   -- XAIS12345678901 (Accruals) <br/>  \
+        \ -- XAIS12345678902 (Cash) |\n| CASH | Simulate a scenario where the success\
+        \ response returns data associated with an accountingType of 'CASH'. <br/>\
+        \ Use the following businessId for this scenario: <br/> - XBIS12345678901\
+        \ |\n| ACCRUALS | Simulate a scenario where the success response returns data\
+        \ associated with an accountingType of 'ACCRUALS'. <br/> Use the following\
+        \ businessId for this scenario: <br/> - XBIS12345678901 |\n| STATEFUL | Performs\
+        \ a stateful retrieve. |\n"
+      parameters:
+      - name: nino
+        in: path
+        description: |
+          National Insurance number, in the format `AA999999A`
+        required: true
+        schema:
+          type: string
+          example: TC663795B
+      - name: businessId
+        in: path
+        description: |
+          A unique identifier for the business income source. It must conform to the following regex: `^X[A-Z0-9]{1}IS[0-9]{11}$`
+        required: true
+        schema:
+          pattern: "^X[A-Z0-9]{1}IS[0-9]{11}$"
+          type: string
+          example: XAIS12345678910
+      - name: Accept
+        in: header
+        description: |
+          Specifies the response format and the version of the API to be used.
+        required: true
+        schema:
+          type: string
+          enum:
+          - application/vnd.hmrc.2.0+json
+      - name: Authorization
+        in: header
+        description: |
+          An OAuth 2.0 Bearer Token with the *read:self-assessment* scope.
+        required: true
+        schema:
+          type: string
+          example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+      - name: Gov-Test-Scenario
+        in: header
+        description: |
+          Only in sandbox environment. See Test Data table for all header values.
+        required: false
+        schema:
+          type: string
+          example: "-"
+      responses:
+        "200":
+          description: Success
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                title: Retrieve additional information for a user's business details
+                required:
+                - businessId
+                - typeOfBusiness
+                type: object
+                properties:
+                  businessId:
+                    pattern: "^X[a-zA-Z0-9]{1}IS[0-9]{11}$"
+                    type: string
+                    description: A unique identifier for the business income source.
+                      Previously known as selfEmploymentId.
+                    example: XAIS12345678910
+                  typeOfBusiness:
+                    type: string
+                    description: The type of business income source.
+                    enum:
+                    - self-employment
+                    - uk-property
+                    - foreign-property
+                    - property-unspecified
+                  tradingName:
+                    type: string
+                    description: The trading name of the business.
+                    example: ABC Ltd.
+                  yearOfMigration:
+                    pattern: "^(\\d{4})$"
+                    type: string
+                    description: Year of migration.
+                    format: yyyy
+                    example: "2022"
+                  firstAccountingPeriodStartDate:
+                    type: string
+                    description: |-
+                      The first accounting period start date.
+
+                      Note: <b>Accounting period start and end dates should not be displayed to users of your software.</b>
+                    format: yyyy-MM-DD
+                    example: 2019-09-30
+                  firstAccountingPeriodEndDate:
+                    type: string
+                    description: |-
+                      The first accounting period end date.
+
+                      Note: <b>Accounting period start and end dates should not be displayed to users of your software.</b>
+                    format: yyyy-MM-DD
+                    example: 2020-02-29
+                  latencyDetails:
+                    required:
+                    - latencyEndDate
+                    - latencyIndicator1
+                    - latencyIndicator2
+                    - taxYear1
+                    - taxYear2
+                    type: object
+                    properties:
+                      latencyEndDate:
+                        type: string
+                        description: End date of latency period for the income source.
+                        format: YYYY-MM-DD
+                        example: 2020-02-27
+                      taxYear1:
+                        maximum: 4
+                        minimum: 4
+                        type: string
+                        description: First tax year for the income source.
+                        format: YYYY-YY
+                        example: 2018-19
+                      latencyIndicator1:
+                        maximum: 1
+                        minimum: 1
+                        type: string
+                        description: Self assessment submission frequency.
+                        example: A
+                        enum:
+                        - A
+                        - Q
+                      taxYear2:
+                        maximum: 4
+                        minimum: 4
+                        type: string
+                        description: Second tax year for the income source.
+                        format: YYYY-YY
+                        example: 2019-20
+                      latencyIndicator2:
+                        maximum: 1
+                        minimum: 1
+                        type: string
+                        description: Self assessment submission frequency.
+                        example: A
+                        enum:
+                        - A
+                        - Q
+                    description: Income source latency details.
+                  quarterlyTypeChoice:
+                    type: object
+                    properties:
+                      quarterlyPeriodType:
+                        type: string
+                        description: The quarterly period type that is being chosen
+                          for the business ID.
+                        example: standard
+                        enum:
+                        - standard
+                        - calendar
+                      taxYearOfChoice:
+                        pattern: "^2[0-9]{3}-[0-9]{2}$"
+                        type: string
+                        description: The tax year for which the quarterly period type
+                          was chosen.
+                        example: 2023-24
+                    description: Quarterly reporting period type.
+                  accountingPeriods:
+                    type: array
+                    description: |-
+                      The start and end dates of the latest accounting period for the business. This array contains dates for the latest accounting period only.
+
+                      Note: <b>Accounting period start and end dates should not be displayed to users of your software.</b>
+                    items:
+                      required:
+                      - end
+                      - start
+                      type: object
+                      properties:
+                        start:
+                          type: string
+                          description: Date your books or accounts start - the beginning
+                            of your accounting period.
+                          example: 2018-04-06
+                        end:
+                          type: string
+                          description: Date your books or accounts are made up to
+                            - the end of your accounting period.
+                          example: 2019-04-05
+                      additionalProperties: false
+                  accountingType:
+                    type: string
+                    description: |-
+                      CASH if you used the cash basis, money actually received and paid out, to calculate your income and expenses. Otherwise ACCRUALS.
+
+                      This field is deprecated and will be removed in a future release. Use the `Retrieve Accounting Type` endpoint instead.
+                    deprecated: true
+                    enum:
+                    - CASH
+                    - ACCRUALS
+                  commencementDate:
+                    type: string
+                    description: "Business start date, must be in the past."
+                    example: 2016-09-24
+                  cessationDate:
+                    type: string
+                    description: Business cessation date.
+                    example: 2020-03-24
+                  businessAddressLineOne:
+                    type: string
+                    description: First line of the business address.
+                    example: 1 ABC Rd.
+                  businessAddressLineTwo:
+                    type: string
+                    description: Second line of the business address.
+                    example: London
+                  businessAddressLineThree:
+                    type: string
+                    description: Third line of the business address.
+                    example: Greater London
+                  businessAddressLineFour:
+                    type: string
+                    description: Fourth line of the business address.
+                    example: United Kingdom
+                  businessAddressPostcode:
+                    type: string
+                    description: Business code.
+                    example: M1 1AG
+                  businessAddressCountryCode:
+                    type: string
+                    description: ISO country code for the business if it is in a non-GB
+                      country. The two-letter code for a country must adhere to ISO
+                      3166.
+                    example: FR
+                  links:
+                    type: array
+                    items:
+                      required:
+                      - href
+                      - method
+                      - rel
+                      type: object
+                      properties:
+                        href:
+                          type: string
+                          description: The relative url of the endpoint.
+                          example: /individuals/business/details/CX897463D/XAIS12345678910
+                        rel:
+                          type: string
+                          description: |-
+                            A label for the endpoint, which describes how it is related to the current resource
+                            The rel will be self where the action is retrieval of the same resource.
+                          enum:
+                          - self
+                        method:
+                          type: string
+                          description: The HTTP method type for the endpoint.
+                          enum:
+                          - GET
+                      additionalProperties: false
+                      description: A list of endpoint links that indicate possible
+                        actions related to the current resource.
+                additionalProperties: false
+                description: Retrieve business details response
+              examples:
+                example-response:
+                  description: Example Response
+                  value:
+                    $ref: ./examples/retrieveBusinessDetails/response.json
+        "400":
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value:
+                    code: FORMAT_NINO
+                    message: The provided NINO is invalid
+                FORMAT_BUSINESS_ID:
+                  description: |
+                    The format of the supplied Business ID field is not valid.
+                  value:
+                    code: FORMAT_BUSINESS_ID
+                    message: The provided Business ID is invalid
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: "The request did not match any available Sandbox data.\
+                    \ Check that the supplied Gov-Test-Scenario is correct for \n\
+                    this endpoint version. This error will only be returned in the\
+                    \ Sandbox environment.\n"
+                  value:
+                    code: RULE_INCORRECT_GOV_TEST_SCENARIO
+                    message: The supplied Gov-Test-Scenario is not valid
+        "403":
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value:
+                    code: CLIENT_OR_AGENT_NOT_AUTHORISED
+                    message: The client or agent is not authorised
+        "404":
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    The supplied income source could not be found.
+                  value:
+                    code: MATCHING_RESOURCE_NOT_FOUND
+                    message: Matching resource not found
+                NO_BUSINESS_FOUND:
+                  description: |
+                    No business found for given NINO with given Business ID.
+                  value:
+                    code: NO_BUSINESS_FOUND
+                    message: No business found for given NINO and Business ID
+      security:
+      - User-Restricted:
+        - read:self-assessment
+  /individuals/business/details/{nino}/{businessId}/{taxYear}:
+    put:
+      summary: Create and Amend Quarterly Period Type for a Business
+      description: "This endpoint enables you to create and amend the type of quarterly\
+        \ reporting period used for a business for a specific tax year.\nYou can choose\
+        \ standard quarterly periods (where the first period is 6 April to 5 July)\
+        \ or calendar quarterly periods (first period 1 April to 30 June) for each\
+        \ tax year.\nNote that the quarterly period type cannot be changed after a\
+        \ submission is made for that year.\n\n**Warning:** If an invalid tax year\
+        \ or invalid business ID is submitted, the service will return a RULE_REQUEST_CANNOT_BE_FULFILLED\
+        \ error response. Only the current tax year is allowed and business IDs must\
+        \ relate to a self-employment or property income source.\n\n\n### Test data\n\
+        Scenario simulation using Gov-Test-Scenario headers is only available in the\
+        \ sandbox environment.    \n\n| Header Value (Gov-Test-Scenario) | Scenario\
+        \                                                                        \
+        \                                                                        \
+        \         |\n|----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|\n\
+        | N/A - DEFAULT                    | Simulate a successful response.     \
+        \                                                                        \
+        \                                                     |\n| BUSINESS_ID_NOT_FOUND\
+        \           | Simulates the scenario in which the business ID is not found.\
+        \                                                                        \
+        \                            |\n| BUSINESS_ID_STATE_CONFLICT       | Simulates\
+        \ the scenario in which the request conflicts with the current state of the\
+        \ business ID.                                                           \
+        \      |\n| QUARTERLY_PERIOD_UPDATING        | Simulates the scenario in which\
+        \ the quarterly period type cannot be changed for the current year as the\
+        \ business is treated as commencing in the following year. |\n| STATEFUL \
+        \                        | Performs a stateful create and update.        \
+        \                                                                        \
+        \                                           |\n"
+      parameters:
+      - name: nino
+        in: path
+        description: |
+          National Insurance number, in the format `AA999999A`
+        required: true
+        schema:
+          type: string
+          example: TC663795B
+      - name: businessId
+        in: path
+        description: |
+          A unique identifier for the business income source. It must conform to the following regex: `^X[A-Z0-9]{1}IS[0-9]{11}$`
+        required: true
+        schema:
+          pattern: "^X[A-Z0-9]{1}IS[0-9]{11}$"
+          type: string
+          example: XAIS12345678910
+      - name: taxYear
+        in: path
+        description: |
+          The tax year for which a quarterly period type is being set.
+        required: true
+        schema:
+          pattern: "^2[0-9]{3}-[0-9]{2}$"
+          type: string
+          example: 2023-24
+      - name: Accept
+        in: header
+        description: |
+          Specifies the response format and the version of the API to be used.
+        required: true
+        schema:
+          type: string
+          enum:
+          - application/vnd.hmrc.2.0+json
+      - name: Authorization
+        in: header
+        description: |
+          An OAuth 2.0 Bearer Token with the *read:self-assessment* scope.
+        required: true
+        schema:
+          type: string
+          example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+      - name: Gov-Test-Scenario
+        in: header
+        description: |
+          Only in sandbox environment. See Test Data table for all header values.
+        required: false
+        schema:
+          type: string
+          example: "-"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Create & Amend Quarterly Period Type for a Business ID
+              required:
+              - quarterlyPeriodType
+              type: object
+              properties:
+                quarterlyPeriodType:
+                  type: string
+                  description: The quarterly period type that is being set for the
+                    business id.
+                  example: standard
+                  enum:
+                  - standard
+                  - calendar
+              additionalProperties: false
+              description: Create & Amend Quarterly Period Type request
+            examples:
+              example-request:
+                description: Example request given any tax year
+                value:
+                  $ref: ./examples/createAmendQuarterlyPeriodType/def1/request.json
+      responses:
+        "204":
+          description: Success(No Content)
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content: {}
+        "400":
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value:
+                    code: FORMAT_NINO
+                    message: The provided NINO is invalid
+                FORMAT_BUSINESS_ID:
+                  description: |
+                    The format of the supplied Business ID field is not valid.
+                  value:
+                    code: FORMAT_BUSINESS_ID
+                    message: The provided Business ID is invalid
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied taxYear value is not valid.
+                  value:
+                    code: FORMAT_TAX_YEAR
+                    message: The provided tax year is invalid
+                RULE_BUSINESS_ID_STATE_CONFLICT:
+                  description: |
+                    The request conflicts with the current state of the business ID.
+                  value:
+                    code: RULE_BUSINESS_ID_STATE_CONFLICT
+                    message: The request conflicts with the current state of the business
+                      ID
+                RULE_QUARTERLY_PERIOD_UPDATING:
+                  description: |
+                    Quarterly period type cannot be changed for the current year as the business is treated as commencing in the following year.
+                  value:
+                    code: RULE_QUARTERLY_PERIOD_UPDATING
+                    message: Quarterly period type cannot be changed for the current
+                      year as the business is treated as commencing in the following
+                      year
+                RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED:
+                  description: |
+                    An empty or non-matching body was submitted.
+                  value:
+                    code: RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED
+                    message: An empty or non-matching body was submitted
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: "The request did not match any available Sandbox data.\
+                    \ Check that the supplied Gov-Test-Scenario is correct for \n\
+                    this endpoint version. This error will only be returned in the\
+                    \ Sandbox environment.\n"
+                  value:
+                    code: RULE_INCORRECT_GOV_TEST_SCENARIO
+                    message: The supplied Gov-Test-Scenario is not valid
+        "403":
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value:
+                    code: CLIENT_OR_AGENT_NOT_AUTHORISED
+                    message: The client or agent is not authorised
+        "404":
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                RULE_BUSINESS_ID_NOT_FOUND:
+                  description: |
+                    The business ID provided is not found.
+                  value:
+                    code: RULE_BUSINESS_ID_NOT_FOUND
+                    message: The business ID provided is not found
+        "422":
+          description: Unprocessable Entity
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                RULE_REQUEST_CANNOT_BE_FULFILLED:
+                  description: |
+                    Reporting type can only be changed for self-employment and property income sources
+                  value:
+                    code: RULE_REQUEST_CANNOT_BE_FULFILLED
+                    message: Request cannot proceed for this income source type
+      security:
+      - User-Restricted:
+        - write:self-assessment
+  /individuals/business/details/{nino}/{businessId}/{taxYear}/accounting-type:
+    get:
+      summary: Retrieve Accounting Type
+      security:
+      - User-Restricted:
+        - read:self-assessment
+    put:
+      summary: Update Accounting Type
+      security:
+      - User-Restricted:
+        - write:self-assessment
+  /individuals/business/details/{nino}/{businessId}/{taxYear}/periods-of-account:
+    get:
+      summary: Retrieve Periods of Account
+      security:
+      - User-Restricted:
+        - read:self-assessment
+    put:
+      summary: Create or Update Periods of Account
+      security:
+      - User-Restricted:
+        - write:self-assessment
+  /individuals/business/details/{nino}/{businessId}/{taxYear}/late-accounting-date-rule-election:
+    get:
+      tags:
+      - Late Accounting Date Rule
+      summary: "Retrieve Late Accounting Date Rule Election [test only]"
+      description: |
+        This endpoint allows a customer to retrieve the Late Accounting Date Rule election they have on record for their given tax year. A National Insurance number, business ID and tax year must be provided.
+
+        ### Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+        | Header Value (Gov-Test-Scenario) | Scenario                                       |
+        |----------------------------------|------------------------------------------------|
+        | N/A - DEFAULT                    | Simulates a success response.                  |
+        | NOT_FOUND                        | Simulates the scenario where no data is found. |
+        | STATEFUL                         | Performs a stateful retrieve.                  |
+      parameters:
+      - name: nino
+        in: path
+        description: |
+          National Insurance number, in the format `AA999999A`
+        required: true
+        schema:
+          type: string
+          example: TC663795B
+      - name: businessId
+        in: path
+        description: |
+          A unique identifier for the self-employment business. Property business IDs will return a 404. It must conform to the following regex: `^X[A-Z0-9]{1}IS[0-9]{11}$`
+        required: true
+        schema:
+          pattern: "^X[A-Z0-9]{1}IS[0-9]{11}$"
+          type: string
+          example: XAIS12345678910
+      - name: taxYear
+        in: path
+        description: "The tax year the data applies to. The start year and end year\
+          \ must not span two tax years. \nNo gaps are allowed, for example, 2025-27\
+          \ is not valid.\n"
+        required: true
+        schema:
+          pattern: "^2[0-9]{3}-[0-9]{2}$"
+          type: string
+          example: 2024-25
+      - name: Accept
+        in: header
+        description: |
+          Specifies the response format and the version of the API to be used.
+        required: true
+        schema:
+          type: string
+          enum:
+          - application/vnd.hmrc.2.0+json
+      - name: Authorization
+        in: header
+        description: |
+          An OAuth 2.0 Bearer Token with the *read:self-assessment* scope.
+        required: true
+        schema:
+          type: string
+          example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+      - name: Gov-Test-Scenario
+        in: header
+        description: |
+          Only in sandbox environment. See Test Data table for all header values.
+        required: false
+        schema:
+          type: string
+          example: "-"
+      responses:
+        "200":
+          description: Success
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                title: Retrieve Late Accounting Date Rule Response
+                required:
+                - disapply
+                - eligible
+                type: object
+                properties:
+                  disapply:
+                    type: boolean
+                    description: "Indicates whether the taxpayer is electing to opt\
+                      \ out of the automatic application of the Late Accounting Date\
+                      \ Rule (LADR). \n* true: The taxpayer elects to opt out of LADR.\
+                      \ Profits for the period 1–5 April must be apportioned and reported\
+                      \ separately. \n* false: The taxpayer accepts the automatic\
+                      \ application of LADR. The accounting period is treated as ending\
+                      \ on 5 April for the tax year."
+                    example: true
+                  eligible:
+                    type: boolean
+                    description: Indicates whether the income source is eligible to
+                      disapply the late accounting date rule. Only businesses with
+                      an accounting date (Period of Account) that falls between 31
+                      March and 4 April inclusive are eligible.
+                    example: true
+                  taxYearOfElection:
+                    type: string
+                    description: Indicates the first year that the disapplication
+                      commenced. This field is only returned when disapply is set
+                      to true.
+                    format: YYYY-YY
+                    example: 2025-26
+                  taxYearElectionExpires:
+                    type: string
+                    description: Indicates the last tax year for the disapplication.
+                    format: YYYY-YY
+                    example: 2025-26
+                additionalProperties: false
+                description: Retrieve Late Accounting Date Rule Response
+              example:
+                $ref: ./examples/retrieveLateAccountingDateRule/response.json
+        "400":
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value:
+                    code: FORMAT_NINO
+                    message: The provided NINO is invalid
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied taxYear value is not valid.
+                  value:
+                    code: FORMAT_TAX_YEAR
+                    message: The provided tax year is invalid
+                FORMAT_BUSINESS_ID:
+                  description: |
+                    The format of the supplied Business ID field is not valid.
+                  value:
+                    code: FORMAT_BUSINESS_ID
+                    message: The provided Business ID is invalid
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value:
+                    code: RULE_TAX_YEAR_RANGE_INVALID
+                    message: A tax year range of one year is required
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: "The request did not match any available Sandbox data.\
+                    \ Check that the supplied Gov-Test-Scenario is correct for \n\
+                    this endpoint version. This error will only be returned in the\
+                    \ Sandbox environment.\n"
+                  value:
+                    code: RULE_INCORRECT_GOV_TEST_SCENARIO
+                    message: The supplied Gov-Test-Scenario is not valid
+        "403":
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value:
+                    code: CLIENT_OR_AGENT_NOT_AUTHORISED
+                    message: The client or agent is not authorised
+        "404":
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    The supplied income source could not be found.
+                  value:
+                    code: MATCHING_RESOURCE_NOT_FOUND
+                    message: Matching resource not found
+      security:
+      - User-Restricted:
+        - read:self-assessment
+  /individuals/business/details/{nino}/{businessId}/{taxYear}/late-accounting-date-rule-election/disapply:
+    post:
+      tags:
+      - Late Accounting Date Rule
+      summary: "Disapply Late Accounting Date Rule [test only]"
+      description: |
+        Allows a customer to submit an election to disapply the automatic Late Accounting Date Rule treatment for a given tax year. A National Insurance number, business ID and tax year must be provided.
+
+        ### Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+        | Header Value (Gov-Test-Scenario) | Scenario                                                                                        |
+        |----------------------------------|-------------------------------------------------------------------------------------------------|
+        | N/A - DEFAULT                    | Simulates a success response.                                                                   |
+        | NOT_FOUND                        | Simulates the scenario where no data is found.                                                  |
+        | NO_ACCOUNTING_DATE_FOUND         | Simulates the scenario where no accounting date between the 1st and 4th April can be found.     |
+        | ELECTION_PERIOD_NOT_EXPIRED      | Simulates the scenario where the existing status has not expired.                               |
+        | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window. |
+        | TYPE_OF_BUSINESS_INCORRECT       | Simulates the scenario where the type of business is incorrect.                                 |
+        | STATEFUL                         | Performs a stateful disapplication.                                                             |
+      parameters:
+      - name: nino
+        in: path
+        description: |
+          National Insurance number, in the format `AA999999A`
+        required: true
+        schema:
+          type: string
+          example: TC663795B
+      - name: businessId
+        in: path
+        description: |
+          A unique identifier for the self-employment business. Property business IDs will return a 404. It must conform to the following regex: `^X[A-Z0-9]{1}IS[0-9]{11}$`
+        required: true
+        schema:
+          pattern: "^X[A-Z0-9]{1}IS[0-9]{11}$"
+          type: string
+          example: XAIS12345678910
+      - name: taxYear
+        in: path
+        description: "The tax year the data applies to. The start year and end year\
+          \ must not span two tax years. \nThe minimum tax year is 2025-26. No gaps\
+          \ are allowed, for example, 2025-27 is not valid. (The minimum tax year\
+          \ in Sandbox is 2024-25.)\n"
+        required: true
+        schema:
+          pattern: "^2[0-9]{3}-[0-9]{2}$"
+          type: string
+          example: 2025-26
+      - name: Accept
+        in: header
+        description: |
+          Specifies the response format and the version of the API to be used.
+        required: true
+        schema:
+          type: string
+          enum:
+          - application/vnd.hmrc.2.0+json
+      - name: Authorization
+        in: header
+        description: |
+          An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
+        required: true
+        schema:
+          type: string
+          example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+      - name: Gov-Test-Scenario
+        in: header
+        description: |
+          Only in sandbox environment. See Test Data table for all header values.
+        required: false
+        schema:
+          type: string
+          example: "-"
+      responses:
+        "204":
+          description: Success(No Content)
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+        "400":
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value:
+                    code: FORMAT_NINO
+                    message: The provided NINO is invalid
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied taxYear value is not valid.
+                  value:
+                    code: FORMAT_TAX_YEAR
+                    message: The provided tax year is invalid
+                FORMAT_BUSINESS_ID:
+                  description: |
+                    The format of the supplied Business ID field is not valid.
+                  value:
+                    code: FORMAT_BUSINESS_ID
+                    message: The provided Business ID is invalid
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value:
+                    code: RULE_TAX_YEAR_RANGE_INVALID
+                    message: A tax year range of one year is required
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported. Either the tax year specified is before the minimum tax year value, or it is after the maximum tax year value.
+                  value:
+                    code: RULE_TAX_YEAR_NOT_SUPPORTED
+                    message: The tax year specified does not lie within the supported
+                      range
+                RULE_TAX_YEAR_NOT_ENDED:
+                  description: |
+                    The submission has been made before the tax year it relates to has ended.
+                  value:
+                    code: RULE_TAX_YEAR_NOT_ENDED
+                    message: The specified tax year has not yet ended
+                RULE_OUTSIDE_AMENDMENT_WINDOW:
+                  description: |
+                    The request cannot be completed as you are outside the amendment window.
+                  value:
+                    code: RULE_OUTSIDE_AMENDMENT_WINDOW
+                    message: You are outside the amendment window
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: "The request did not match any available Sandbox data.\
+                    \ Check that the supplied Gov-Test-Scenario is correct for \n\
+                    this endpoint version. This error will only be returned in the\
+                    \ Sandbox environment.\n"
+                  value:
+                    code: RULE_INCORRECT_GOV_TEST_SCENARIO
+                    message: The supplied Gov-Test-Scenario is not valid
+        "403":
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value:
+                    code: CLIENT_OR_AGENT_NOT_AUTHORISED
+                    message: The client or agent is not authorised
+        "404":
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    The supplied income source could not be found.
+                  value:
+                    code: MATCHING_RESOURCE_NOT_FOUND
+                    message: Matching resource not found
+        "422":
+          description: Unprocessable Entity
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                RULE_NO_ACCOUNTING_DATE_FOUND:
+                  description: |
+                    No Accounting Date found between 31 March and 4 April inclusive.
+                  value:
+                    code: RULE_NO_ACCOUNTING_DATE_FOUND
+                    message: Cannot disapply LADR. No Accounting Date found between
+                      31 March and 4 April inclusive
+                RULE_ELECTION_PERIOD_NOT_EXPIRED:
+                  description: |
+                    The existing LADR status has not expired.  Once the year is finalised, the election cannot be changed for 5 years.
+                  value:
+                    code: RULE_ELECTION_PERIOD_NOT_EXPIRED
+                    message: Cannot change LADR disapplication. Existing status has
+                      not expired
+                RULE_TYPE_OF_BUSINESS_INCORRECT:
+                  description: |
+                    The supplied Business ID does not represent a self-employment business.
+                  value:
+                    code: RULE_TYPE_OF_BUSINESS_INCORRECT
+                    message: The businessId is not for a self-employment business
+      security:
+      - User-Restricted:
+        - write:self-assessment
+  /individuals/business/details/{nino}/{businessId}/{taxYear}/late-accounting-date-rule-election/withdraw:
+    delete:
+      tags:
+      - Late Accounting Date Rule
+      summary: "Withdraw Late Accounting Date Rule [test only]"
+      description: |
+        Allows a customer to withdraw an election to disapply the automatic Late Accounting Date Rule treatment for a given tax year. This setting cannot be changed after finalisation (except when submitting post finalisation amendments) and will remain in place for 5 years. A National Insurance number, business ID and tax year must be provided.
+
+        ### Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+        | Header Value (Gov-Test-Scenario) | Scenario                                                                                        |
+        |----------------------------------|-------------------------------------------------------------------------------------------------|
+        | N/A - DEFAULT                    | Simulates a successful response.                                                                |
+        | NOT_FOUND                        | Simulates the scenario where no data is found.                                                  |
+        | ELECTION_PERIOD_NOT_EXPIRED      | Simulates the scenario where the existing status has not expired.                               |
+        | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window. |
+        | STATEFUL                         | Performs a stateful withdrawal.                                                                 |
+      parameters:
+      - name: nino
+        in: path
+        description: |
+          National Insurance number, in the format `AA999999A`
+        required: true
+        schema:
+          type: string
+          example: TC663795B
+      - name: businessId
+        in: path
+        description: |
+          A unique identifier for the self-employment business. Property business IDs will return a 404. It must conform to the following regex: `^X[A-Z0-9]{1}IS[0-9]{11}$`
+        required: true
+        schema:
+          pattern: "^X[A-Z0-9]{1}IS[0-9]{11}$"
+          type: string
+          example: XAIS12345678910
+      - name: taxYear
+        in: path
+        description: "The tax year the data applies to. The start year and end year\
+          \ must not span two tax years. \nThe minimum tax year is 2025-26. No gaps\
+          \ are allowed, for example, 2025-27 is not valid. (The minimum tax year\
+          \ in Sandbox is 2024-25.)\n"
+        required: true
+        schema:
+          pattern: "^2[0-9]{3}-[0-9]{2}$"
+          type: string
+          example: 2025-26
+      - name: Accept
+        in: header
+        description: |
+          Specifies the response format and the version of the API to be used.
+        required: true
+        schema:
+          type: string
+          enum:
+          - application/vnd.hmrc.2.0+json
+      - name: Authorization
+        in: header
+        description: |
+          An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
+        required: true
+        schema:
+          type: string
+          example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+      - name: Gov-Test-Scenario
+        in: header
+        description: |
+          Only in sandbox environment. See Test Data table for all header values.
+        required: false
+        schema:
+          type: string
+          example: "-"
+      responses:
+        "204":
+          description: No Content
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+        "400":
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value:
+                    code: FORMAT_NINO
+                    message: The provided NINO is invalid
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied taxYear value is not valid.
+                  value:
+                    code: FORMAT_TAX_YEAR
+                    message: The provided tax year is invalid
+                FORMAT_BUSINESS_ID:
+                  description: |
+                    The format of the supplied Business ID field is not valid.
+                  value:
+                    code: FORMAT_BUSINESS_ID
+                    message: The provided Business ID is invalid
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value:
+                    code: RULE_TAX_YEAR_RANGE_INVALID
+                    message: A tax year range of one year is required
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported. Either the tax year specified is before the minimum tax year value, or it is after the maximum tax year value.
+                  value:
+                    code: RULE_TAX_YEAR_NOT_SUPPORTED
+                    message: The tax year specified does not lie within the supported
+                      range
+                RULE_TAX_YEAR_NOT_ENDED:
+                  description: |
+                    The submission has been made before the tax year it relates to has ended.
+                  value:
+                    code: RULE_TAX_YEAR_NOT_ENDED
+                    message: The specified tax year has not yet ended
+                RULE_OUTSIDE_AMENDMENT_WINDOW:
+                  description: |
+                    The request cannot be completed as you are outside the amendment window.
+                  value:
+                    code: RULE_OUTSIDE_AMENDMENT_WINDOW
+                    message: You are outside the amendment window
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: "The request did not match any available Sandbox data.\
+                    \ Check that the supplied Gov-Test-Scenario is correct for \n\
+                    this endpoint version. This error will only be returned in the\
+                    \ Sandbox environment.\n"
+                  value:
+                    code: RULE_INCORRECT_GOV_TEST_SCENARIO
+                    message: The supplied Gov-Test-Scenario is not valid
+        "403":
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value:
+                    code: CLIENT_OR_AGENT_NOT_AUTHORISED
+                    message: The client or agent is not authorised
+        "404":
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    The supplied income source could not be found.
+                  value:
+                    code: MATCHING_RESOURCE_NOT_FOUND
+                    message: Matching resource not found
+        "422":
+          description: Unprocessable Entity
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                RULE_ELECTION_PERIOD_NOT_EXPIRED:
+                  description: |
+                    The existing LADR status has not expired.  Once the year is finalised, the election cannot be changed for 5 years.
+                  value:
+                    code: RULE_ELECTION_PERIOD_NOT_EXPIRED
+                    message: Cannot change LADR disapplication. Existing status has
+                      not expired
+      security:
+      - User-Restricted:
+        - write:self-assessment
+components:
+  schemas:
+    response:
+      title: Retrieve a list of all business details for Subcontractor
+      required:
+      - listOfBusinesses
+      type: object
+      properties:
+        listOfBusinesses:
+          type: array
+          description: An array containing the details of all the business income
+            sources held against the specified National insurance number.
+          items:
+            required:
+            - businessId
+            - typeOfBusiness
+            type: object
+            properties:
+              typeOfBusiness:
+                type: string
+                description: The type of business income source.
+                example: self-employment
+                enum:
+                - self-employment
+                - uk-property
+                - foreign-property
+                - property-unspecified
+              businessId:
+                pattern: "^X[a-zA-Z0-9]{1}IS[0-9]{11}$"
+                type: string
+                description: A unique identifier for the business income source. Previously
+                  known as selfEmploymentId.
+                example: XAIS12345678910
+              tradingName:
+                type: string
+                description: The trading name of the business.
+                example: RCDTS
+              links:
+                type: array
+                items:
+                  required:
+                  - href
+                  - method
+                  - rel
+                  type: object
+                  properties:
+                    href:
+                      type: string
+                      description: The relative url of the endpoint.
+                      example: /individuals/business/details/CX897463D/XAIS12345678910
+                    rel:
+                      type: string
+                      description: |-
+                        A label for the endpoint, which describes how it is related to the current resource
+                        The rel will be `self` where the action is retrieval of the same resource.
+                      enum:
+                      - retrieve-business-details
+                    method:
+                      type: string
+                      description: The HTTP method type for the endpoint.
+                      enum:
+                      - GET
+                  additionalProperties: false
+                  description: A list of endpoint links that indicate possible actions
+                    related to the current resource.
+            additionalProperties: false
+        links:
+          type: array
+          items:
+            required:
+            - href
+            - method
+            - rel
+            type: object
+            properties:
+              href:
+                type: string
+                description: The relative url of the endpoint.
+                example: /individuals/business/details/CX897463D/list
+              rel:
+                type: string
+                description: |-
+                  A label for the endpoint, which describes how it is related to the current resource
+                  The rel will be self where the action is retrieval of the same resource.
+                enum:
+                - self
+              method:
+                type: string
+                description: The HTTP method type for the endpoint.
+                enum:
+                - GET
+            additionalProperties: false
+            description: A list of endpoint links that indicate possible actions related
+              to the current resource.
+      additionalProperties: false
+      description: Retrieve business details response
+    error-response:
+      required:
+      - code
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      description: Error Response
+    response_1:
+      title: Retrieve additional information for a user's business details
+      required:
+      - businessId
+      - typeOfBusiness
+      type: object
+      properties:
+        businessId:
+          pattern: "^X[a-zA-Z0-9]{1}IS[0-9]{11}$"
+          type: string
+          description: A unique identifier for the business income source. Previously
+            known as selfEmploymentId.
+          example: XAIS12345678910
+        typeOfBusiness:
+          type: string
+          description: The type of business income source.
+          enum:
+          - self-employment
+          - uk-property
+          - foreign-property
+          - property-unspecified
+        tradingName:
+          type: string
+          description: The trading name of the business.
+          example: ABC Ltd.
+        yearOfMigration:
+          pattern: "^(\\d{4})$"
+          type: string
+          description: Year of migration.
+          format: yyyy
+          example: "2022"
+        firstAccountingPeriodStartDate:
+          type: string
+          description: |-
+            The first accounting period start date.
+
+            Note: <b>Accounting period start and end dates should not be displayed to users of your software.</b>
+          format: yyyy-MM-DD
+          example: 2019-09-30
+        firstAccountingPeriodEndDate:
+          type: string
+          description: |-
+            The first accounting period end date.
+
+            Note: <b>Accounting period start and end dates should not be displayed to users of your software.</b>
+          format: yyyy-MM-DD
+          example: 2020-02-29
+        latencyDetails:
+          required:
+          - latencyEndDate
+          - latencyIndicator1
+          - latencyIndicator2
+          - taxYear1
+          - taxYear2
+          type: object
+          properties:
+            latencyEndDate:
+              type: string
+              description: End date of latency period for the income source.
+              format: YYYY-MM-DD
+              example: 2020-02-27
+            taxYear1:
+              maximum: 4
+              minimum: 4
+              type: string
+              description: First tax year for the income source.
+              format: YYYY-YY
+              example: 2018-19
+            latencyIndicator1:
+              maximum: 1
+              minimum: 1
+              type: string
+              description: Self assessment submission frequency.
+              example: A
+              enum:
+              - A
+              - Q
+            taxYear2:
+              maximum: 4
+              minimum: 4
+              type: string
+              description: Second tax year for the income source.
+              format: YYYY-YY
+              example: 2019-20
+            latencyIndicator2:
+              maximum: 1
+              minimum: 1
+              type: string
+              description: Self assessment submission frequency.
+              example: A
+              enum:
+              - A
+              - Q
+          description: Income source latency details.
+        quarterlyTypeChoice:
+          type: object
+          properties:
+            quarterlyPeriodType:
+              type: string
+              description: The quarterly period type that is being chosen for the
+                business ID.
+              example: standard
+              enum:
+              - standard
+              - calendar
+            taxYearOfChoice:
+              pattern: "^2[0-9]{3}-[0-9]{2}$"
+              type: string
+              description: The tax year for which the quarterly period type was chosen.
+              example: 2023-24
+          description: Quarterly reporting period type.
+        accountingPeriods:
+          type: array
+          description: |-
+            The start and end dates of the latest accounting period for the business. This array contains dates for the latest accounting period only.
+
+            Note: <b>Accounting period start and end dates should not be displayed to users of your software.</b>
+          items:
+            required:
+            - end
+            - start
+            type: object
+            properties:
+              start:
+                type: string
+                description: Date your books or accounts start - the beginning of
+                  your accounting period.
+                example: 2018-04-06
+              end:
+                type: string
+                description: Date your books or accounts are made up to - the end
+                  of your accounting period.
+                example: 2019-04-05
+            additionalProperties: false
+        accountingType:
+          type: string
+          description: |-
+            CASH if you used the cash basis, money actually received and paid out, to calculate your income and expenses. Otherwise ACCRUALS.
+
+            This field is deprecated and will be removed in a future release. Use the `Retrieve Accounting Type` endpoint instead.
+          deprecated: true
+          enum:
+          - CASH
+          - ACCRUALS
+        commencementDate:
+          type: string
+          description: "Business start date, must be in the past."
+          example: 2016-09-24
+        cessationDate:
+          type: string
+          description: Business cessation date.
+          example: 2020-03-24
+        businessAddressLineOne:
+          type: string
+          description: First line of the business address.
+          example: 1 ABC Rd.
+        businessAddressLineTwo:
+          type: string
+          description: Second line of the business address.
+          example: London
+        businessAddressLineThree:
+          type: string
+          description: Third line of the business address.
+          example: Greater London
+        businessAddressLineFour:
+          type: string
+          description: Fourth line of the business address.
+          example: United Kingdom
+        businessAddressPostcode:
+          type: string
+          description: Business code.
+          example: M1 1AG
+        businessAddressCountryCode:
+          type: string
+          description: ISO country code for the business if it is in a non-GB country.
+            The two-letter code for a country must adhere to ISO 3166.
+          example: FR
+        links:
+          type: array
+          items:
+            required:
+            - href
+            - method
+            - rel
+            type: object
+            properties:
+              href:
+                type: string
+                description: The relative url of the endpoint.
+                example: /individuals/business/details/CX897463D/XAIS12345678910
+              rel:
+                type: string
+                description: |-
+                  A label for the endpoint, which describes how it is related to the current resource
+                  The rel will be self where the action is retrieval of the same resource.
+                enum:
+                - self
+              method:
+                type: string
+                description: The HTTP method type for the endpoint.
+                enum:
+                - GET
+            additionalProperties: false
+            description: A list of endpoint links that indicate possible actions related
+              to the current resource.
+      additionalProperties: false
+      description: Retrieve business details response
+    request:
+      title: Create & Amend Quarterly Period Type for a Business ID
+      required:
+      - quarterlyPeriodType
+      type: object
+      properties:
+        quarterlyPeriodType:
+          type: string
+          description: The quarterly period type that is being set for the business
+            id.
+          example: standard
+          enum:
+          - standard
+          - calendar
+      additionalProperties: false
+      description: Create & Amend Quarterly Period Type request
+    response_2:
+      title: Retrieve Late Accounting Date Rule Response
+      required:
+      - disapply
+      - eligible
+      type: object
+      properties:
+        disapply:
+          type: boolean
+          description: "Indicates whether the taxpayer is electing to opt out of the\
+            \ automatic application of the Late Accounting Date Rule (LADR). \n* true:\
+            \ The taxpayer elects to opt out of LADR. Profits for the period 1–5 April\
+            \ must be apportioned and reported separately. \n* false: The taxpayer\
+            \ accepts the automatic application of LADR. The accounting period is\
+            \ treated as ending on 5 April for the tax year."
+          example: true
+        eligible:
+          type: boolean
+          description: Indicates whether the income source is eligible to disapply
+            the late accounting date rule. Only businesses with an accounting date
+            (Period of Account) that falls between 31 March and 4 April inclusive
+            are eligible.
+          example: true
+        taxYearOfElection:
+          type: string
+          description: Indicates the first year that the disapplication commenced.
+            This field is only returned when disapply is set to true.
+          format: YYYY-YY
+          example: 2025-26
+        taxYearElectionExpires:
+          type: string
+          description: Indicates the last tax year for the disapplication.
+          format: YYYY-YY
+          example: 2025-26
+      additionalProperties: false
+      description: Retrieve Late Accounting Date Rule Response
+  parameters:
+    nino:
+      name: nino
+      in: path
+      description: |
+        National Insurance number, in the format `AA999999A`
+      required: true
+      schema:
+        type: string
+        example: TC663795B
+    acceptJson:
+      name: Accept
+      in: header
+      description: |
+        Specifies the response format and the version of the API to be used.
+      required: true
+      schema:
+        type: string
+        enum:
+        - application/vnd.hmrc.2.0+json
+    authorization:
+      name: Authorization
+      in: header
+      description: |
+        An OAuth 2.0 Bearer Token with the *read:self-assessment* scope.
+      required: true
+      schema:
+        type: string
+        example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+    testScenarioHeader:
+      name: Gov-Test-Scenario
+      in: header
+      description: |
+        Only in sandbox environment. See Test Data table for all header values.
+      required: false
+      schema:
+        type: string
+        example: "-"
+    businessId:
+      name: businessId
+      in: path
+      description: |
+        A unique identifier for the business income source. It must conform to the following regex: `^X[A-Z0-9]{1}IS[0-9]{11}$`
+      required: true
+      schema:
+        pattern: "^X[A-Z0-9]{1}IS[0-9]{11}$"
+        type: string
+        example: XAIS12345678910
+    taxYear:
+      name: taxYear
+      in: path
+      description: |
+        The tax year for which a quarterly period type is being set.
+      required: true
+      schema:
+        pattern: "^2[0-9]{3}-[0-9]{2}$"
+        type: string
+        example: 2023-24
+    selfEmploymentBusinessId:
+      name: businessId
+      in: path
+      description: |
+        A unique identifier for the self-employment business. Property business IDs will return a 404. It must conform to the following regex: `^X[A-Z0-9]{1}IS[0-9]{11}$`
+      required: true
+      schema:
+        pattern: "^X[A-Z0-9]{1}IS[0-9]{11}$"
+        type: string
+        example: XAIS12345678910
+    taxYearNoMinimum:
+      name: taxYear
+      in: path
+      description: "The tax year the data applies to. The start year and end year\
+        \ must not span two tax years. \nNo gaps are allowed, for example, 2025-27\
+        \ is not valid.\n"
+      required: true
+      schema:
+        pattern: "^2[0-9]{3}-[0-9]{2}$"
+        type: string
+        example: 2024-25
+    accountingTypeTaxYear:
+      name: taxYear
+      in: path
+      description: "The tax year the data applies to. The start year and end year\
+        \ must not span two tax years. \nThe minimum tax year is 2025-26. No gaps\
+        \ are allowed, for example, 2025-27 is not valid. (The minimum tax year in\
+        \ Sandbox is 2024-25.)\n"
+      required: true
+      schema:
+        pattern: "^2[0-9]{3}-[0-9]{2}$"
+        type: string
+        example: 2025-26
+    authorizationWriteScopeHeader:
+      name: Authorization
+      in: header
+      description: |
+        An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
+      required: true
+      schema:
+        type: string
+        example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+  examples:
+    formatNino:
+      description: |
+        The format of the supplied NINO field is not valid.
+      value:
+        code: FORMAT_NINO
+        message: The provided NINO is invalid
+    ruleIncorrectGovTestScenario:
+      description: "The request did not match any available Sandbox data. Check that\
+        \ the supplied Gov-Test-Scenario is correct for \nthis endpoint version. This\
+        \ error will only be returned in the Sandbox environment.\n"
+      value:
+        code: RULE_INCORRECT_GOV_TEST_SCENARIO
+        message: The supplied Gov-Test-Scenario is not valid
+    clientOrAgentNotAuthorised:
+      description: |
+        The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+      value:
+        code: CLIENT_OR_AGENT_NOT_AUTHORISED
+        message: The client or agent is not authorised
+    notFound:
+      description: |
+        The supplied income source could not be found.
+      value:
+        code: MATCHING_RESOURCE_NOT_FOUND
+        message: Matching resource not found
+    formatBusinessId:
+      description: |
+        The format of the supplied Business ID field is not valid.
+      value:
+        code: FORMAT_BUSINESS_ID
+        message: The provided Business ID is invalid
+    notFoundBusiness:
+      description: |
+        No business found for given NINO with given Business ID.
+      value:
+        code: NO_BUSINESS_FOUND
+        message: No business found for given NINO and Business ID
+    formatTaxYear:
+      description: |
+        The format of the supplied taxYear value is not valid.
+      value:
+        code: FORMAT_TAX_YEAR
+        message: The provided tax year is invalid
+    ruleBusinessIdStateConflict:
+      description: |
+        The request conflicts with the current state of the business ID.
+      value:
+        code: RULE_BUSINESS_ID_STATE_CONFLICT
+        message: The request conflicts with the current state of the business ID
+    ruleQuarterlyPeriodUpdating:
+      description: |
+        Quarterly period type cannot be changed for the current year as the business is treated as commencing in the following year.
+      value:
+        code: RULE_QUARTERLY_PERIOD_UPDATING
+        message: Quarterly period type cannot be changed for the current year as the
+          business is treated as commencing in the following year
+    ruleIncorrectOrEmptyBodySubmitted:
+      description: |
+        An empty or non-matching body was submitted.
+      value:
+        code: RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED
+        message: An empty or non-matching body was submitted
+    ruleBusinessIdNotFound:
+      description: |
+        The business ID provided is not found.
+      value:
+        code: RULE_BUSINESS_ID_NOT_FOUND
+        message: The business ID provided is not found
+    ruleRequestCannotBeFulfilledQRT:
+      description: |
+        Reporting type can only be changed for self-employment and property income sources
+      value:
+        code: RULE_REQUEST_CANNOT_BE_FULFILLED
+        message: Request cannot proceed for this income source type
+    ruleTaxYearRangeInvalid:
+      description: |
+        Tax year range invalid. A tax year range of one year is required.
+      value:
+        code: RULE_TAX_YEAR_RANGE_INVALID
+        message: A tax year range of one year is required
+    ruleTaxYearNotSupported:
+      description: |
+        The specified tax year is not supported. Either the tax year specified is before the minimum tax year value, or it is after the maximum tax year value.
+      value:
+        code: RULE_TAX_YEAR_NOT_SUPPORTED
+        message: The tax year specified does not lie within the supported range
+    ruleTaxYearNotEnded:
+      description: |
+        The submission has been made before the tax year it relates to has ended.
+      value:
+        code: RULE_TAX_YEAR_NOT_ENDED
+        message: The specified tax year has not yet ended
+    ruleOutsideAmendmentWindow:
+      description: |
+        The request cannot be completed as you are outside the amendment window.
+      value:
+        code: RULE_OUTSIDE_AMENDMENT_WINDOW
+        message: You are outside the amendment window
+    ruleNoAccountingDateFound:
+      description: |
+        No Accounting Date found between 31 March and 4 April inclusive.
+      value:
+        code: RULE_NO_ACCOUNTING_DATE_FOUND
+        message: Cannot disapply LADR. No Accounting Date found between 31 March and
+          4 April inclusive
+    ruleElectionPeriodNotExpired:
+      description: |
+        The existing LADR status has not expired.  Once the year is finalised, the election cannot be changed for 5 years.
+      value:
+        code: RULE_ELECTION_PERIOD_NOT_EXPIRED
+        message: Cannot change LADR disapplication. Existing status has not expired
+    ruleTypeOfBusinessIncorrect:
+      description: |
+        The supplied Business ID does not represent a self-employment business.
+      value:
+        code: RULE_TYPE_OF_BUSINESS_INCORRECT
+        message: The businessId is not for a self-employment business
+  headers:
+    correlationId:
+      description: |
+        Unique ID for operation tracking
+        String, 36 characters.
+      required: true
+      schema:
+        type: string
+        example: c75f40a6-a3df-4429-a697-471eeec46435
+    deprecationHeader:
+      description: |
+        The deprecation date/time for this endpoint.
+      required: false
+      schema:
+        type: string
+        example: "Sun, 01 Jan 2023 23:59:59 GMT"
+    sunsetHeader:
+      description: |
+        The earliest date/time this endpoint will become unavailable after deprecation.
+      required: false
+      schema:
+        type: string
+        example: "Sun, 02 Jul 2023 23:59:59 GMT"
+    linkHeader:
+      description: |
+        See the API documentation:
+      required: false
+      schema:
+        type: string
+        example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api
+  securitySchemes:
+    User-Restricted:
+      type: oauth2
+      description: "HMRC supports OAuth 2.0 for authenticating [User-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints)\
+        \ API requests"
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.service.hmrc.gov.uk/oauth/authorize
+          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
+          refreshUrl: https://api.service.hmrc.gov.uk/oauth/refresh
+          scopes:
+            write:self-assessment: Grant write access
+            read:self-assessment: Grant read access
