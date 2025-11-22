@@ -928,11 +928,12 @@ paths:
         \ the scenario in which the request conflicts with the current state of the\
         \ business ID.                                                           \
         \      |\n| QUARTERLY_PERIOD_UPDATING        | Simulates the scenario in which\
-        \ the quarterly period type cannot be changed for the current year as the\
-        \ business is treated as commencing in the following year. |\n| STATEFUL \
-        \                        | Performs a stateful create and update.        \
+        \ the quarterly period type cannot be changed when a business commencement\
+        \ date falls between 1st and 5th of April, and the current date is also within\
+        \ that date range but later than the business commencement date. |\n| STATEFUL\
+        \                         | Performs a stateful create and update.       \
         \                                                                        \
-        \                                           |\n"
+        \                                            |\n"
       parameters:
       - name: nino
         in: path
@@ -1117,12 +1118,13 @@ paths:
                       ID
                 RULE_QUARTERLY_PERIOD_UPDATING:
                   description: |
-                    Quarterly period type cannot be changed for the current year as the business is treated as commencing in the following year.
+                    The quarterly period type cannot be changed when a business commencement date falls between 1st and 5th of April, and the current date is also within that date range but later than the business commencement date.
                   value:
                     code: RULE_QUARTERLY_PERIOD_UPDATING
-                    message: Quarterly period type cannot be changed for the current
-                      year as the business is treated as commencing in the following
-                      year
+                    message: "The quarterly period type cannot be changed when a business\
+                      \ commencement date falls between 1st and 5th of April, and\
+                      \ the current date is also within that date range but later\
+                      \ than the business commencement date"
                 RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED:
                   description: |
                     An empty or non-matching body was submitted.
@@ -2919,11 +2921,12 @@ components:
         message: The request conflicts with the current state of the business ID
     ruleQuarterlyPeriodUpdating:
       description: |
-        Quarterly period type cannot be changed for the current year as the business is treated as commencing in the following year.
+        The quarterly period type cannot be changed when a business commencement date falls between 1st and 5th of April, and the current date is also within that date range but later than the business commencement date.
       value:
         code: RULE_QUARTERLY_PERIOD_UPDATING
-        message: Quarterly period type cannot be changed for the current year as the
-          business is treated as commencing in the following year
+        message: "The quarterly period type cannot be changed when a business commencement\
+          \ date falls between 1st and 5th of April, and the current date is also\
+          \ within that date range but later than the business commencement date"
     ruleIncorrectOrEmptyBodySubmitted:
       description: |
         An empty or non-matching body was submitted.
