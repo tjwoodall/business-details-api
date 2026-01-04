@@ -1327,7 +1327,7 @@ paths:
     get:
       tags:
       - Late Accounting Date Rule
-      summary: "Retrieve Late Accounting Date Rule Election [test only]"
+      summary: Retrieve Late Accounting Date Rule Election
       description: |
         This endpoint allows a customer to retrieve the Late Accounting Date Rule election they have on record for their given tax year. A National Insurance number, business ID and tax year must be provided.
 
@@ -1659,7 +1659,7 @@ paths:
     post:
       tags:
       - Late Accounting Date Rule
-      summary: "Disapply Late Accounting Date Rule [test only]"
+      summary: Disapply Late Accounting Date Rule
       description: |
         Allows a customer to submit an election to disapply the automatic Late Accounting Date Rule treatment for a given tax year. A National Insurance number, business ID and tax year must be provided.
 
@@ -2040,7 +2040,7 @@ paths:
     delete:
       tags:
       - Late Accounting Date Rule
-      summary: "Withdraw Late Accounting Date Rule [test only]"
+      summary: Withdraw Late Accounting Date Rule
       description: |
         Allows a customer to withdraw an election to disapply the automatic Late Accounting Date Rule treatment for a given tax year. This setting cannot be changed after finalisation (except when submitting post finalisation amendments) and will remain in place for 5 years. A National Insurance number, business ID and tax year must be provided.
 
