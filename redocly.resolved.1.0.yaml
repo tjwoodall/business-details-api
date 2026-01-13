@@ -1,0 +1,1168 @@
+openapi: 3.0.3
+info:
+  version: '1.0'
+  title: Business Details (MTD)
+  description: |
+    The following endpoints are stateful in the sandbox:
+    * Retrieve Business Details
+    * List All Businesses
+
+    # Send fraud prevention data
+    HMRC monitors transactions to help protect your customers' confidential data from criminals and fraudsters. 
+
+    <div class="govuk-warning-text warning-icon-fix">
+      <span class="govuk-warning-text__icon warning-icon-ui-fix" aria-hidden="true">!</span>
+      <strong class="govuk-warning-text__text">
+        <span class="govuk-warning-text__assistive">Warning</span>
+        You are required by law to submit header data for this API. This includes all associated APIs and endpoints.
+      </strong>
+    </div>
+
+    [Check the data you need to send](/guides/fraud-prevention/). You can also use the [Test API](/api-documentation/docs/api/service/txm-fph-validator-api/1.0) during initial development and as part of your quality assurance checks.
+
+    # Changelog
+    You can find the changelog in the [income-tax-mtd-changelog](https://github.com/hmrc/income-tax-mtd-changelog/#readme) GitHub wiki.
+
+
+    # Support
+
+    * Direct reports of bugs or errors in Production or Sandbox code, or queries about HMRC business functionality (such as how a specific field is used by HMRC or why it is needed) to the [Software Development Support Team (SDST)](https://developer.service.hmrc.gov.uk/developer/support).
+    * Send queries or feedback related to the design of the APIs (including recommended changes) using the  [income-tax-mtd-changelog](https://github.com/hmrc/income-tax-mtd-changelog/issues) GitHub page.
+    * <a href="/contact/report-technical-problem?newTab=true&service=api-documentation-frontend" target="_blank">Is this page not working properly? (opens in new tab)</a>
+servers:
+  - url: https://test-api.service.hmrc.gov.uk
+    description: Sandbox
+  - url: https://api.service.hmrc.gov.uk
+    description: Production
+paths:
+  /individuals/business/details/{nino}/list:
+    get:
+      summary: List All Businesses
+      description: |
+        This endpoint allows a developer to retrieve all details of a user's business income sources. The unique account 
+        reference (National Insurance number) must be provided.
+
+        ### Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.    
+
+        | Header Value (Gov-Test-Scenario) | Scenario                                                                                         |
+        |----------------------------------|--------------------------------------------------------------------------------------------------|
+        | N/A - DEFAULT                    | Simulate a successful response with a self-employment business.                                  |
+        | PROPERTY                         | Simulate a successful response with a uk-property business.                                      |
+        | FOREIGN_PROPERTY                 | Simulate a successful response with a foreign-property business.                                 |                                                                |
+        | BUSINESS_AND_PROPERTY            | Simulate a successful response with a self-employment, uk-property and foreign-property business.|
+        | UNSPECIFIED                      | Simulate a successful response with a property-unspecified business.                             |
+        | NOT_FOUND                        | Simulates the scenario where no data is found.                                                   |
+        | STATEFUL                         | Performs a stateful list.                                                                        |
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`
+          schema: &ref_6
+            type: string
+            example: TC663795B
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: &ref_7
+            type: string
+            enum:
+              - application/vnd.hmrc.1.0+json
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *read:self-assessment* scope.
+          schema: &ref_8
+            type: string
+            example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: &ref_9
+            type: string
+            example: '-'
+          required: false
+      security:
+        - User-Restricted:
+            - read:self-assessment
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: &ref_0
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: &ref_1
+                type: string
+                example: Sun, 01 Jan 2023 23:59:59 GMT
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: &ref_2
+                type: string
+                example: Sun, 02 Jul 2023 23:59:59 GMT
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: &ref_3
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/individual-calculations-api
+              required: false
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                title: Retrieve a list of all business details for Subcontractor
+                description: Retrieve business details response
+                type: object
+                properties:
+                  listOfBusinesses:
+                    type: array
+                    description: An array containing the details of all the business income sources held against the specified National insurance number.
+                    items:
+                      type: object
+                      properties:
+                        typeOfBusiness:
+                          description: The type of business income source.
+                          enum:
+                            - self-employment
+                            - uk-property
+                            - foreign-property
+                            - property-unspecified
+                          type: string
+                          example: self-employment
+                        businessId:
+                          description: A unique identifier for the business income source. Previously known as selfEmploymentId.
+                          type: string
+                          example: XAIS12345678910
+                          pattern: ^X[a-zA-Z0-9]{1}IS[0-9]{11}$
+                        tradingName:
+                          description: The trading name of the business.
+                          type: string
+                          example: RCDTS
+                        links:
+                          type: array
+                          items:
+                            type: object
+                            description: A list of endpoint links that indicate possible actions related to the current resource.
+                            properties:
+                              href:
+                                description: The relative url of the endpoint.
+                                type: string
+                                example: /individuals/business/details/CX897463D/XAIS12345678910
+                              rel:
+                                description: |-
+                                  A label for the endpoint, which describes how it is related to the current resource
+                                  The rel will be `self` where the action is retrieval of the same resource.
+                                type: string
+                                enum:
+                                  - retrieve-business-details
+                              method:
+                                description: The HTTP method type for the endpoint.
+                                type: string
+                                enum:
+                                  - GET
+                            required:
+                              - href
+                              - rel
+                              - method
+                            additionalProperties: false
+                      required:
+                        - businessId
+                        - typeOfBusiness
+                      additionalProperties: false
+                  links:
+                    type: array
+                    items:
+                      type: object
+                      description: A list of endpoint links that indicate possible actions related to the current resource.
+                      properties:
+                        href:
+                          description: The relative url of the endpoint.
+                          type: string
+                          example: /individuals/business/details/CX897463D/list
+                        rel:
+                          description: |-
+                            A label for the endpoint, which describes how it is related to the current resource
+                            The rel will be self where the action is retrieval of the same resource.
+                          type: string
+                          enum:
+                            - self
+                        method:
+                          description: The HTTP method type for the endpoint.
+                          type: string
+                          enum:
+                            - GET
+                      required:
+                        - href
+                        - rel
+                        - method
+                      additionalProperties: false
+                required:
+                  - listOfBusinesses
+                additionalProperties: false
+              examples:
+                example-response:
+                  description: Example Response
+                  value:
+                    listOfBusinesses:
+                      - typeOfBusiness: self-employment
+                        businessId: XAIS12345678910
+                        tradingName: RCDTS
+                        links:
+                          - href: /individuals/business/details/NZ345734C/XAIS12345678910
+                            method: GET
+                            rel: retrieve-business-details
+                      - typeOfBusiness: foreign-property
+                        businessId: XAIS23456789101
+                        links:
+                          - href: /individuals/business/details/NZ345734C/XAIS23456789101
+                            method: GET
+                            rel: retrieve-business-details
+                    links:
+                      - href: /individuals/business/details/NZ345734C/list
+                        method: GET
+                        rel: self
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: &ref_4
+                  code:
+                    description: The error code
+                    type: string
+                  message:
+                    description: The error message
+                    type: string
+                required: &ref_5
+                  - code
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: &ref_10
+                    code: FORMAT_NINO
+                    message: The provided NINO is invalid
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for 
+                    this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: &ref_11
+                    code: RULE_INCORRECT_GOV_TEST_SCENARIO
+                    message: The supplied Gov-Test-Scenario is not valid
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: &ref_12
+                    code: CLIENT_OR_AGENT_NOT_AUTHORISED
+                    message: The client or agent is not authorised
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    The matching resource is not found.
+                  value: &ref_13
+                    code: MATCHING_RESOURCE_NOT_FOUND
+                    message: Matching resource not found
+  /individuals/business/details/{nino}/{businessId}:
+    get:
+      summary: Retrieve Business Details
+      description: |
+        This endpoint allows a developer to retrieve additional information for one of a user's business income source. The 
+        unique account reference (National Insurance number) must be provided as well as the unique business identifier.
+
+        ### Test data
+        Scenario simulations using <code>Gov-Test-Scenario</code> headers is only available in the sandbox environment.
+        | Header Value (Gov-Test-Scenario) | Scenario |
+        | --- | --- |
+        | N/A - DEFAULT | Simulate a successful response with a self-employment business. <br/> Use the following businessId for this scenario: <br/> - XBIS12345678901 |
+        | PROPERTY | Simulate a successful response with a uk-property business. <br/> Use the following businessId for this scenario: <br/> - XPIS12345678901 |
+        | FOREIGN_PROPERTY | Simulate a successful response with a foreign-property business. <br/> Use the following businessId for this scenario: <br/> - XFIS12345678901 |
+        | UNSPECIFIED | Simulate a successful response with a property-unspecified business. <br/> Use the following businessId for this scenario: <br/> - XAIS12345678901 |
+        | NOT_FOUND | Simulate a scenario where no data is found. |
+        | DYNAMIC | Returns a dynamic response where the type of response will change corresponding to the businessId provided in the request: <br/> - For a response with a self-employment business, use businessId: <br/>   -- XBIS12345678901 (Accruals) <br/>   -- XBIS12345678902 (Cash) <br/> - For a response with a uk-property business, use businessId: <br/>   -- XPIS12345678901 (Accruals) <br/>   -- XPIS12345678902 (Cash) <br/> - For a response with a foreign-property business, use businessId: <br/>   -- XFIS12345678901 (Accruals) <br/>   -- XFIS12345678902 (Cash) <br/> - For a response with a property-unspecified business, use businessId: <br/>   -- XAIS12345678901 (Accruals) <br/>   -- XAIS12345678902 (Cash) |
+        | CASH | Simulate a scenario where the success response returns data associated with an accountingType of 'CASH'. <br/> Use the following businessId for this scenario: <br/> - XBIS12345678901 |
+        | ACCRUALS | Simulate a scenario where the success response returns data associated with an accountingType of 'ACCRUALS'. <br/> Use the following businessId for this scenario: <br/> - XBIS12345678901 |
+        | STATEFUL | Performs a stateful retrieve. |
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`
+          schema: *ref_6
+          required: true
+        - name: businessId
+          in: path
+          description: |
+            An identifier for the business, unique to the customer.<p>Must conform to the regular expression `^X[A-Z0-9]{1}IS[0-9]{11}$`
+          schema: &ref_14
+            type: string
+            pattern: ^X[A-Z0-9]{1}IS[0-9]{11}$
+            example: XAIS12345678910
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_7
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *read:self-assessment* scope.
+          schema: *ref_8
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_9
+          required: false
+      security:
+        - User-Restricted:
+            - read:self-assessment
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                title: Retrieve additional information for a user's business details
+                description: Retrieve business details response
+                type: object
+                properties:
+                  businessId:
+                    type: string
+                    description: A unique identifier for the business income source. Previously known as selfEmploymentId.
+                    example: XAIS12345678910
+                    pattern: ^X[a-zA-Z0-9]{1}IS[0-9]{11}$
+                  typeOfBusiness:
+                    type: string
+                    description: The type of business income source.
+                    enum:
+                      - self-employment
+                      - uk-property
+                      - foreign-property
+                      - property-unspecified
+                  tradingName:
+                    type: string
+                    description: The trading name of the business.
+                    example: ABC Ltd.
+                  yearOfMigration:
+                    type: string
+                    description: Year of migration.
+                    pattern: ^(\d{4})$
+                    format: yyyy
+                    example: '2022'
+                  firstAccountingPeriodStartDate:
+                    type: string
+                    description: |-
+                      The first accounting period start date.
+
+                      Note: <b>Accounting period start and end dates should not be displayed to users of your software.</b>
+                    format: yyyy-MM-DD
+                    example: '2019-09-30'
+                  firstAccountingPeriodEndDate:
+                    type: string
+                    description: |-
+                      The first accounting period end date.
+
+                      Note: <b>Accounting period start and end dates should not be displayed to users of your software.</b>
+                    format: yyyy-MM-DD
+                    example: '2020-02-29'
+                  latencyDetails:
+                    type: object
+                    description: Income source latency details.
+                    properties:
+                      latencyEndDate:
+                        type: string
+                        description: End date of latency period for the income source.
+                        example: '2020-02-27'
+                        format: YYYY-MM-DD
+                      taxYear1:
+                        type: string
+                        description: First tax year for the income source.
+                        example: 2018-19
+                        format: YYYY-YY
+                        minimum: 4
+                        maximum: 4
+                      latencyIndicator1:
+                        type: string
+                        description: Self assessment submission frequency.
+                        enum:
+                          - A
+                          - Q
+                        minimum: 1
+                        maximum: 1
+                        example: A
+                      taxYear2:
+                        type: string
+                        description: Second tax year for the income source.
+                        example: 2019-20
+                        format: YYYY-YY
+                        minimum: 4
+                        maximum: 4
+                      latencyIndicator2:
+                        type: string
+                        description: Self assessment submission frequency.
+                        enum:
+                          - A
+                          - Q
+                        minimum: 1
+                        maximum: 1
+                        example: A
+                    required:
+                      - latencyEndDate
+                      - taxYear1
+                      - latencyIndicator1
+                      - taxYear2
+                      - latencyIndicator2
+                  quarterlyTypeChoice:
+                    type: object
+                    description: Quarterly reporting period type.
+                    properties:
+                      quarterlyPeriodType:
+                        type: string
+                        enum:
+                          - standard
+                          - calendar
+                        description: The quarterly period type that is being chosen for the business ID.
+                        example: standard
+                      taxYearOfChoice:
+                        type: string
+                        description: The tax year for which the quarterly period type was chosen.
+                        pattern: ^2[0-9]{3}-[0-9]{2}$
+                        example: 2023-24
+                    taxYearOfChoice:
+                      - quarterlyPeriodType
+                      - taxYear1
+                  accountingPeriods:
+                    type: array
+                    description: |-
+                      The start and end dates of the latest accounting period for the business. This array contains dates for the latest accounting period only.
+
+                      Note: <b>Accounting period start and end dates should not be displayed to users of your software.</b>
+                    items:
+                      type: object
+                      properties:
+                        start:
+                          description: Date your books or accounts start - the beginning of your accounting period.
+                          type: string
+                          example: '2018-04-06'
+                        end:
+                          description: Date your books or accounts are made up to - the end of your accounting period.
+                          type: string
+                          example: '2019-04-05'
+                      required:
+                        - start
+                        - end
+                      additionalProperties: false
+                  accountingType:
+                    description: |-
+                      CASH if you used the cash basis, money actually received and paid out, to calculate your income and expenses. Otherwise ACCRUALS.
+
+                      This field is deprecated and will be removed in a future release. Use the `Retrieve Accounting Type` endpoint available in version 2.0 instead.
+                    type: string
+                    deprecated: true
+                    enum:
+                      - CASH
+                      - ACCRUALS
+                  commencementDate:
+                    description: Business start date, must be in the past.
+                    type: string
+                    example: '2016-09-24'
+                  cessationDate:
+                    description: Business cessation date.
+                    type: string
+                    example: '2020-03-24'
+                  businessAddressLineOne:
+                    description: First line of the business address.
+                    type: string
+                    example: 1 ABC Rd.
+                  businessAddressLineTwo:
+                    description: Second line of the business address.
+                    type: string
+                    example: London
+                  businessAddressLineThree:
+                    description: Third line of the business address.
+                    type: string
+                    example: Greater London
+                  businessAddressLineFour:
+                    description: Fourth line of the business address.
+                    type: string
+                    example: United Kingdom
+                  businessAddressPostcode:
+                    description: Business code.
+                    type: string
+                    example: M1 1AG
+                  businessAddressCountryCode:
+                    description: ISO country code for the business if it is in a non-GB country. The two-letter code for a country must adhere to ISO 3166.
+                    type: string
+                    example: FR
+                  links:
+                    type: array
+                    items:
+                      type: object
+                      description: A list of endpoint links that indicate possible actions related to the current resource.
+                      properties:
+                        href:
+                          description: The relative url of the endpoint.
+                          type: string
+                          example: /individuals/business/details/CX897463D/XAIS12345678910
+                        rel:
+                          description: |-
+                            A label for the endpoint, which describes how it is related to the current resource
+                            The rel will be self where the action is retrieval of the same resource.
+                          type: string
+                          enum:
+                            - self
+                        method:
+                          description: The HTTP method type for the endpoint.
+                          type: string
+                          enum:
+                            - GET
+                      required:
+                        - href
+                        - rel
+                        - method
+                      additionalProperties: false
+                required:
+                  - businessId
+                  - typeOfBusiness
+                  - accountingPeriods
+                additionalProperties: false
+              examples:
+                example-response:
+                  description: Example Response
+                  value:
+                    businessId: XAIS12345678910
+                    typeOfBusiness: self-employment
+                    tradingName: ABC Ltd.
+                    yearOfMigration: '2022'
+                    firstAccountingPeriodStartDate: '2019-09-30'
+                    firstAccountingPeriodEndDate: '2020-02-29'
+                    latencyDetails:
+                      latencyEndDate: '2020-02-27'
+                      taxYear1: 2018-19
+                      latencyIndicator1: A
+                      taxYear2: 2019-20
+                      latencyIndicator2: A
+                    accountingPeriods:
+                      - start: '2023-04-06'
+                        end: '2024-04-05'
+                    quarterlyTypeChoice:
+                      quarterlyPeriodType: standard
+                      taxYearOfChoice: 2023-24
+                    accountingType: ACCRUALS
+                    commencementDate: '2023-04-06'
+                    cessationDate: '2024-04-05'
+                    businessAddressLineOne: 1 Acme Rd.
+                    businessAddressLineTwo: London
+                    businessAddressLineThree: Greater London
+                    businessAddressLineFour: United Kingdom
+                    businessAddressPostcode: M1 1AG
+                    businessAddressCountryCode: GB
+                    links:
+                      - href: /individuals/business/details/ET009363D/XAIS12345678910
+                        method: GET
+                        rel: self
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: *ref_10
+                FORMAT_BUSINESS_ID:
+                  description: |
+                    The format of the supplied Business ID field is not valid.
+                  value: &ref_15
+                    code: FORMAT_BUSINESS_ID
+                    message: The provided Business ID is invalid
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for 
+                    this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_11
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_12
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    The matching resource is not found.
+                  value: *ref_13
+                NO_BUSINESS_FOUND:
+                  description: |
+                    No business found for given NINO with given Business ID.
+                  value:
+                    code: NO_BUSINESS_FOUND
+                    message: No business found for given NINO and Business ID
+  /individuals/business/details/{nino}/{businessId}/{taxYear}:
+    put:
+      summary: Create and Amend Quarterly Period Type for a Business
+      description: "This endpoint enables you to create and amend the type of quarterly reporting period used for a business for a specific tax year.\nYou can choose standard quarterly periods (where the first period is 6 April to 5 July) or calendar quarterly periods (first period 1 April to 30 June) for each tax year.\nNote that the quarterly period type cannot be changed after a submission is made for that year.\n\n**Warning:** If an invalid tax year or invalid business ID is submitted, the service will return an HTTP 500 INTERNAL_SERVER_ERROR response. Only the current tax year is allowed and business IDs must relate to a self-employment or property income source. This is a known issue and will be fixed to return an appropriate error in a future release.\n\n\n### Test data\nScenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.    \n\n| Header Value (Gov-Test-Scenario) | Scenario                                                                                                                                                         |\n|----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|\n| N/A - DEFAULT                    | Simulate a successful response.                                                                                                                                  |\n| BUSINESS_ID_NOT_FOUND\t           | Simulates the scenario in which the business ID is not found.                                                                                                    |\n| BUSINESS_ID_STATE_CONFLICT       | Simulates the scenario in which the request conflicts with the current state of the business ID.                                                                 |\n| QUARTERLY_PERIOD_UPDATING        | Simulates the scenario in which the quarterly period type cannot be changed when a business commencement date falls between 1st and 5th of April, and the current date is also within that date range but later than the business commencement date. |\n| STATEFUL                         | Performs a stateful create and update.                                                                                                                           |\n"
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`
+          schema: *ref_6
+          required: true
+        - name: businessId
+          in: path
+          description: |
+            An identifier for the business, unique to the customer.<p>Must conform to the regular expression `^X[A-Z0-9]{1}IS[0-9]{11}$`
+          schema: *ref_14
+          required: true
+        - name: taxYear
+          in: path
+          description: |
+            The tax year for which a quarterly period type is being set.
+          schema:
+            type: string
+            pattern: ^2[0-9]{3}-[0-9]{2}$
+            example: 2023-24
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_7
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *read:self-assessment* scope.
+          schema: *ref_8
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_9
+          required: false
+      security:
+        - User-Restricted:
+            - write:self-assessment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $schema: http://json-schema.org/draft-04/schema#
+              title: Create & Amend Quarterly Period Type for a Business ID
+              description: Create & Amend Quarterly Period Type request
+              type: object
+              properties:
+                quarterlyPeriodType:
+                  type: string
+                  description: The quarterly period type that is being set for the business id.
+                  example: standard
+                  enum:
+                    - standard
+                    - calendar
+              required:
+                - quarterlyPeriodType
+              additionalProperties: false
+            examples:
+              example-request:
+                description: Example request given any tax year
+                value:
+                  quarterlyPeriodType: standard
+      responses:
+        '204':
+          description: Success(No Content)
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content: {}
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: *ref_10
+                FORMAT_BUSINESS_ID:
+                  description: |
+                    The format of the supplied Business ID field is not valid.
+                  value: *ref_15
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied taxYear value is not valid.
+                  value:
+                    code: FORMAT_TAX_YEAR
+                    message: The provided tax year is invalid
+                RULE_BUSINESS_ID_STATE_CONFLICT:
+                  description: |
+                    The request conflicts with the current state of the business ID.
+                  value:
+                    code: RULE_BUSINESS_ID_STATE_CONFLICT
+                    message: The request conflicts with the current state of the business ID
+                RULE_QUARTERLY_PERIOD_UPDATING:
+                  description: |
+                    The quarterly period type cannot be changed when a business commencement date falls between 1st and 5th of April, and the current date is also within that date range but later than the business commencement date.
+                  value:
+                    code: RULE_QUARTERLY_PERIOD_UPDATING
+                    message: The quarterly period type cannot be changed when a business commencement date falls between 1st and 5th of April, and the current date is also within that date range but later than the business commencement date
+                RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED:
+                  description: |
+                    An empty or non-matching body was submitted.
+                  value:
+                    code: RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED
+                    message: An empty or non-matching body was submitted
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for 
+                    this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_11
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_12
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                RULE_BUSINESS_ID_NOT_FOUND:
+                  description: |
+                    The business ID provided is not found.
+                  value:
+                    code: RULE_BUSINESS_ID_NOT_FOUND
+                    message: The business ID provided is not found
+components:
+  securitySchemes:
+    User-Restricted:
+      type: oauth2
+      description: HMRC supports OAuth 2.0 for authenticating [User-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) API requests
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.service.hmrc.gov.uk/oauth/authorize
+          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
+          refreshUrl: https://api.service.hmrc.gov.uk/oauth/refresh
+          scopes:
+            write:self-assessment: Grant write access
+            read:self-assessment: Grant read access
