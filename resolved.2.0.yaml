@@ -160,63 +160,7 @@ paths:
                           type: string
                           description: The trading name of the business.
                           example: RCDTS
-                        links:
-                          type: array
-                          items:
-                            required:
-                            - href
-                            - method
-                            - rel
-                            type: object
-                            properties:
-                              href:
-                                type: string
-                                description: The relative url of the endpoint.
-                                example: /individuals/business/details/CX897463D/XAIS12345678910
-                              rel:
-                                type: string
-                                description: |-
-                                  A label for the endpoint, which describes how it is related to the current resource
-                                  The rel will be `self` where the action is retrieval of the same resource.
-                                enum:
-                                - retrieve-business-details
-                              method:
-                                type: string
-                                description: The HTTP method type for the endpoint.
-                                enum:
-                                - GET
-                            additionalProperties: false
-                            description: A list of endpoint links that indicate possible
-                              actions related to the current resource.
                       additionalProperties: false
-                  links:
-                    type: array
-                    items:
-                      required:
-                      - href
-                      - method
-                      - rel
-                      type: object
-                      properties:
-                        href:
-                          type: string
-                          description: The relative url of the endpoint.
-                          example: /individuals/business/details/CX897463D/list
-                        rel:
-                          type: string
-                          description: |-
-                            A label for the endpoint, which describes how it is related to the current resource
-                            The rel will be self where the action is retrieval of the same resource.
-                          enum:
-                          - self
-                        method:
-                          type: string
-                          description: The HTTP method type for the endpoint.
-                          enum:
-                          - GET
-                      additionalProperties: false
-                      description: A list of endpoint links that indicate possible
-                        actions related to the current resource.
                 additionalProperties: false
                 description: Retrieve business details response
               examples:
@@ -685,34 +629,6 @@ paths:
                       country. The two-letter code for a country must adhere to ISO
                       3166.
                     example: FR
-                  links:
-                    type: array
-                    items:
-                      required:
-                      - href
-                      - method
-                      - rel
-                      type: object
-                      properties:
-                        href:
-                          type: string
-                          description: The relative url of the endpoint.
-                          example: /individuals/business/details/CX897463D/XAIS12345678910
-                        rel:
-                          type: string
-                          description: |-
-                            A label for the endpoint, which describes how it is related to the current resource
-                            The rel will be self where the action is retrieval of the same resource.
-                          enum:
-                          - self
-                        method:
-                          type: string
-                          description: The HTTP method type for the endpoint.
-                          enum:
-                          - GET
-                      additionalProperties: false
-                      description: A list of endpoint links that indicate possible
-                        actions related to the current resource.
                 additionalProperties: false
                 description: Retrieve business details response
               examples:
@@ -2439,63 +2355,7 @@ components:
                 type: string
                 description: The trading name of the business.
                 example: RCDTS
-              links:
-                type: array
-                items:
-                  required:
-                  - href
-                  - method
-                  - rel
-                  type: object
-                  properties:
-                    href:
-                      type: string
-                      description: The relative url of the endpoint.
-                      example: /individuals/business/details/CX897463D/XAIS12345678910
-                    rel:
-                      type: string
-                      description: |-
-                        A label for the endpoint, which describes how it is related to the current resource
-                        The rel will be `self` where the action is retrieval of the same resource.
-                      enum:
-                      - retrieve-business-details
-                    method:
-                      type: string
-                      description: The HTTP method type for the endpoint.
-                      enum:
-                      - GET
-                  additionalProperties: false
-                  description: A list of endpoint links that indicate possible actions
-                    related to the current resource.
             additionalProperties: false
-        links:
-          type: array
-          items:
-            required:
-            - href
-            - method
-            - rel
-            type: object
-            properties:
-              href:
-                type: string
-                description: The relative url of the endpoint.
-                example: /individuals/business/details/CX897463D/list
-              rel:
-                type: string
-                description: |-
-                  A label for the endpoint, which describes how it is related to the current resource
-                  The rel will be self where the action is retrieval of the same resource.
-                enum:
-                - self
-              method:
-                type: string
-                description: The HTTP method type for the endpoint.
-                enum:
-                - GET
-            additionalProperties: false
-            description: A list of endpoint links that indicate possible actions related
-              to the current resource.
       additionalProperties: false
       description: Retrieve business details response
     error-response:
@@ -2687,34 +2547,6 @@ components:
           description: ISO country code for the business if it is in a non-GB country.
             The two-letter code for a country must adhere to ISO 3166.
           example: FR
-        links:
-          type: array
-          items:
-            required:
-            - href
-            - method
-            - rel
-            type: object
-            properties:
-              href:
-                type: string
-                description: The relative url of the endpoint.
-                example: /individuals/business/details/CX897463D/XAIS12345678910
-              rel:
-                type: string
-                description: |-
-                  A label for the endpoint, which describes how it is related to the current resource
-                  The rel will be self where the action is retrieval of the same resource.
-                enum:
-                - self
-              method:
-                type: string
-                description: The HTTP method type for the endpoint.
-                enum:
-                - GET
-            additionalProperties: false
-            description: A list of endpoint links that indicate possible actions related
-              to the current resource.
       additionalProperties: false
       description: Retrieve business details response
     request:
