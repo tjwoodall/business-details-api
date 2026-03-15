@@ -411,20 +411,12 @@ paths:
         \ |\n| NOT_FOUND | Simulate a scenario where no data is found. |\n| DYNAMIC\
         \ | Returns a dynamic response where the type of response will change corresponding\
         \ to the businessId provided in the request: <br/> - For a response with a\
-        \ self-employment business, use businessId: <br/>   -- XBIS12345678901 (Accruals)\
-        \ <br/>   -- XBIS12345678902 (Cash) <br/> - For a response with a uk-property\
-        \ business, use businessId: <br/>   -- XPIS12345678901 (Accruals) <br/>  \
-        \ -- XPIS12345678902 (Cash) <br/> - For a response with a foreign-property\
-        \ business, use businessId: <br/>   -- XFIS12345678901 (Accruals) <br/>  \
-        \ -- XFIS12345678902 (Cash) <br/> - For a response with a property-unspecified\
-        \ business, use businessId: <br/>   -- XAIS12345678901 (Accruals) <br/>  \
-        \ -- XAIS12345678902 (Cash) |\n| CASH | Simulate a scenario where the success\
-        \ response returns data associated with an accountingType of 'CASH'. <br/>\
-        \ Use the following businessId for this scenario: <br/> - XBIS12345678901\
-        \ |\n| ACCRUALS | Simulate a scenario where the success response returns data\
-        \ associated with an accountingType of 'ACCRUALS'. <br/> Use the following\
-        \ businessId for this scenario: <br/> - XBIS12345678901 |\n| STATEFUL | Performs\
-        \ a stateful retrieve. |\n"
+        \ self-employment business, use businessId: <br/>   -- XBIS12345678901 <br/>\
+        \ - For a response with a uk-property business, use businessId: <br/>   --\
+        \ XPIS12345678901 <br/> - For a response with a foreign-property business,\
+        \ use businessId: <br/>   -- XFIS12345678901 <br/> - For a response with a\
+        \ property-unspecified business, use businessId: <br/>   -- XAIS12345678901\
+        \ |\n| STATEFUL | Performs a stateful retrieve. |\n"
       parameters:
       - name: nino
         in: path
@@ -639,16 +631,6 @@ paths:
                             - the end of your accounting period.
                           example: 2019-04-05
                       additionalProperties: false
-                  accountingType:
-                    type: string
-                    description: |-
-                      CASH if you used the cash basis, money actually received and paid out, to calculate your income and expenses. Otherwise ACCRUALS.
-
-                      This field is deprecated and will be removed in a future release. Use the `Retrieve Accounting Type` endpoint available in version 2.0 instead.
-                    deprecated: true
-                    enum:
-                    - CASH
-                    - ACCRUALS
                   commencementDate:
                     type: string
                     description: "Business start date, must be in the past."
@@ -1490,16 +1472,6 @@ components:
                   of your accounting period.
                 example: 2019-04-05
             additionalProperties: false
-        accountingType:
-          type: string
-          description: |-
-            CASH if you used the cash basis, money actually received and paid out, to calculate your income and expenses. Otherwise ACCRUALS.
-
-            This field is deprecated and will be removed in a future release. Use the `Retrieve Accounting Type` endpoint available in version 2.0 instead.
-          deprecated: true
-          enum:
-          - CASH
-          - ACCRUALS
         commencementDate:
           type: string
           description: "Business start date, must be in the past."
