@@ -61,8 +61,8 @@
           "description": "First tax year for the income source.",
           "example": "2018-19",
           "format": "tax-year",
-          "minimum": 7,
-          "maximum": 7
+          "minLength": 7,
+          "maxLength": 7
         },
         "latencyIndicator1": {
           "type": "string",
@@ -71,8 +71,8 @@
             "A",
             "Q"
           ],
-          "minimum": 1,
-          "maximum": 1,
+          "minLength": 1,
+          "maxLength": 1,
           "example": "A"
         },
         "taxYear2": {
@@ -80,8 +80,8 @@
           "description": "Second tax year for the income source.",
           "example": "2019-20",
           "format": "tax-year",
-          "minimum": 7,
-          "maximum": 7
+          "minLength": 7,
+          "maxLength": 7
         },
         "latencyIndicator2": {
           "type": "string",
@@ -90,8 +90,8 @@
             "A",
             "Q"
           ],
-          "minimum": 1,
-          "maximum": 1,
+          "minLength": 1,
+          "maxLength": 1,
           "example": "A"
         }
       },
