@@ -18,13 +18,13 @@
       "type": "string",
       "description": "Indicates the first year that the disapplication commenced. This field is only returned when disapply is set to true.",
       "example": "2025-26",
-      "format": "YYYY-YY"
+      "format": "tax-year"
     },
     "taxYearElectionExpires": {
       "type": "string",
       "description": "Indicates the last tax year for the disapplication.",
       "example": "2025-26",
-      "format": "YYYY-YY"
+      "format": "tax-year"
     }
   },
   "required": ["disapply", "eligible"],
