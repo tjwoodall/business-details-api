@@ -35,14 +35,16 @@
     "firstAccountingPeriodStartDate": {
       "type": "string",
       "description": "{{#unless (releasedInProduction 'retrieveAdditionalFields')}}[Test only] {{/unless}}The first accounting period start date.\n\nNote: <b>Accounting period start and end dates should not be displayed to users of your software.</b>",
-      "format": "yyyy-MM-DD",
-      "example": "2019-09-30"
+      "format": "date",
+      "example": "2019-09-30",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
     },
     "firstAccountingPeriodEndDate": {
       "type": "string",
       "description": "{{#unless (releasedInProduction 'retrieveAdditionalFields')}}[Test only] {{/unless}}The first accounting period end date.\n\nNote: <b>Accounting period start and end dates should not be displayed to users of your software.</b>",
-      "format": "yyyy-MM-DD",
-      "example": "2020-02-29"
+      "format": "date",
+      "example": "2020-02-29",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
     },
     "latencyDetails": {
       "type": "object",
@@ -52,13 +54,14 @@
           "type": "string",
           "description": "End date of latency period for the income source.",
           "example": "2020-02-27",
-          "format": "YYYY-MM-DD"
+          "format": "date",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
         },
         "taxYear1": {
           "type": "string",
           "description": "First tax year for the income source.",
           "example": "2018-19",
-          "format": "YYYY-YY",
+          "format": "tax-year",
           "minimum": 7,
           "maximum": 7
         },
@@ -77,7 +80,7 @@
           "type": "string",
           "description": "Second tax year for the income source.",
           "example": "2019-20",
-          "format": "YYYY-YY",
+          "format": "tax-year",
           "minimum": 7,
           "maximum": 7
         },
