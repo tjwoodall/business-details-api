@@ -66,7 +66,7 @@
           "type": "string",
           "description": "First tax year for the income source.",
           "example": "2018-19",
-          "format": "YYYY-YY",
+          "format": "tax-year",
           "minLength": 7,
           "maxLength": 7
         },
@@ -83,7 +83,7 @@
           "type": "string",
           "description": "Second tax year for the income source.",
           "example": "2019-20",
-          "format": "YYYY-YY",
+          "format": "tax-year",
           "minLength": 7,
           "maxLength": 7
         },
