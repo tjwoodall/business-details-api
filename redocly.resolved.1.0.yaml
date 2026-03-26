@@ -229,24 +229,7 @@ paths:
                 example-response:
                   description: Example Response
                   value:
-                    listOfBusinesses:
-                      - typeOfBusiness: self-employment
-                        businessId: XAIS12345678910
-                        tradingName: RCDTS
-                        links:
-                          - href: /individuals/business/details/NZ345734C/XAIS12345678910
-                            method: GET
-                            rel: retrieve-business-details
-                      - typeOfBusiness: foreign-property
-                        businessId: XAIS23456789101
-                        links:
-                          - href: /individuals/business/details/NZ345734C/XAIS23456789101
-                            method: GET
-                            rel: retrieve-business-details
-                    links:
-                      - href: /individuals/business/details/NZ345734C/list
-                        method: GET
-                        rel: self
+                    $ref: ./examples/listAllBusinesses/response.json
         '400':
           description: Bad request
           headers:
@@ -689,36 +672,7 @@ paths:
                 example-response:
                   description: Example Response
                   value:
-                    businessId: XAIS12345678910
-                    typeOfBusiness: self-employment
-                    tradingName: ABC Ltd.
-                    yearOfMigration: '2022'
-                    firstAccountingPeriodStartDate: '2019-09-30'
-                    firstAccountingPeriodEndDate: '2020-02-29'
-                    latencyDetails:
-                      latencyEndDate: '2020-02-27'
-                      taxYear1: 2018-19
-                      latencyIndicator1: A
-                      taxYear2: 2019-20
-                      latencyIndicator2: A
-                    accountingPeriods:
-                      - start: '2023-04-06'
-                        end: '2024-04-05'
-                    quarterlyTypeChoice:
-                      quarterlyPeriodType: standard
-                      taxYearOfChoice: 2023-24
-                    commencementDate: '2023-04-06'
-                    cessationDate: '2024-04-05'
-                    businessAddressLineOne: 1 Acme Rd.
-                    businessAddressLineTwo: London
-                    businessAddressLineThree: Greater London
-                    businessAddressLineFour: United Kingdom
-                    businessAddressPostcode: M1 1AG
-                    businessAddressCountryCode: GB
-                    links:
-                      - href: /individuals/business/details/ET009363D/XAIS12345678910
-                        method: GET
-                        rel: self
+                    $ref: ./examples/retrieveBusinessDetails/response.json
         '400':
           description: Bad request
           headers:
@@ -938,7 +892,7 @@ paths:
               example-request:
                 description: Example request given any tax year
                 value:
-                  quarterlyPeriodType: standard
+                  $ref: ./examples/createAmendQuarterlyPeriodType/def1/request.json
       responses:
         '204':
           description: Success(No Content)
