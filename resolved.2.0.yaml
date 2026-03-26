@@ -3,7 +3,7 @@ info:
   title: Business Details (MTD)
   description: "The following groups of endpoints are stateful in the Sandbox:\n \
     \ * [Accounting Type](#tag/Accounting-Type)\n  * [Periods of Account](#tag/Periods-of-Account)\n\
-    \n  * [Late Accounting Date Rule](#tag/Late-Accounting-Date-Rule)\n\n\nThe following\
+    \  * [Late Accounting Date Rule](#tag/Late-Accounting-Date-Rule)\n\nThe following\
     \ endpoints are stateful in the Sandbox:\n  * Retrieve Business Details\n  * List\
     \ All Businesses\n  * Create and Amend Quarterly Period Type for a Business\n\n\
     # Send fraud prevention data\nHMRC monitors transactions to help protect your\
@@ -1201,23 +1201,19 @@ paths:
         - write:self-assessment
   /individuals/business/details/{nino}/{businessId}/{taxYear}/accounting-type:
     get:
-      summary: Retrieve Accounting Type
       security:
       - User-Restricted:
         - read:self-assessment
     put:
-      summary: Update Accounting Type
       security:
       - User-Restricted:
         - write:self-assessment
   /individuals/business/details/{nino}/{businessId}/{taxYear}/periods-of-account:
     get:
-      summary: Retrieve Periods of Account
       security:
       - User-Restricted:
         - read:self-assessment
     put:
-      summary: Create or Update Periods of Account
       security:
       - User-Restricted:
         - write:self-assessment
