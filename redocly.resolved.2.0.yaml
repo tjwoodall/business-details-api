@@ -1511,12 +1511,6 @@ paths:
                   description: |
                     The format of the supplied Business ID field is not valid.
                   value: *ref_15
-                RULE_TAX_YEAR_NOT_ENDED:
-                  description: |
-                    The submission has been made before the tax year it relates to has ended.
-                  value: &ref_26
-                    code: RULE_TAX_YEAR_NOT_ENDED
-                    message: The specified tax year has not yet ended
                 RULE_OUTSIDE_AMENDMENT_WINDOW:
                   description: |
                     The request cannot be completed as you are outside the amendment window.
@@ -2722,7 +2716,9 @@ paths:
                 RULE_TAX_YEAR_NOT_ENDED:
                   description: |
                     The submission has been made before the tax year it relates to has ended.
-                  value: *ref_26
+                  value: &ref_26
+                    code: RULE_TAX_YEAR_NOT_ENDED
+                    message: The specified tax year has not yet ended
                 RULE_OUTSIDE_AMENDMENT_WINDOW:
                   description: |
                     The request cannot be completed as you are outside the amendment window.
