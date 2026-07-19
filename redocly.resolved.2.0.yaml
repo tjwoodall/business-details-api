@@ -1336,7 +1336,7 @@ paths:
             - write:self-assessment
       summary: Update Accounting Type
       description: |
-        This endpoint allows a customer to update the Accounting Type that they have on record. This can be done after the tax year has ended, before their Final Declaration.
+        This endpoint allows a customer to update the Accounting Type that they have on record. This endpoint can be used during the tax year (in-year submission) before their Final Declaration. 
         A National Insurance number, business ID and tax year must be provided.
 
         ### Test data
@@ -2564,6 +2564,7 @@ paths:
       summary: Disapply Late Accounting Date Rule
       description: |
         Allows a customer to submit an election to disapply the automatic Late Accounting Date Rule treatment for a given tax year. A National Insurance number, business ID and tax year must be provided.
+        This endpoint can only be used after the tax year has ended.
 
         ### Test data
         Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
@@ -2879,6 +2880,7 @@ paths:
       summary: Withdraw Late Accounting Date Rule
       description: |
         Allows a customer to withdraw an election to disapply the automatic Late Accounting Date Rule treatment for a given tax year. This setting cannot be changed after finalisation (except when submitting post finalisation amendments) and will remain in place for 5 years. A National Insurance number, business ID and tax year must be provided.
+        This endpoint can only be used after the tax year has ended.
 
         ### Test data
         Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
