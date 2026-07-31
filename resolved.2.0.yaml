@@ -156,7 +156,14 @@ paths:
                           description: A unique identifier for the business income
                             source. Previously known as selfEmploymentId.
                           example: XAIS12345678910
+                        tradingType:
+                          maxLength: 35
+                          minLength: 1
+                          type: string
+                          description: The type of trading carried out by the business.
+                          example: Plastering
                         tradingName:
+                          maxLength: 105
                           type: string
                           description: The trading name of the business.
                           example: RCDTS
@@ -463,7 +470,14 @@ paths:
                     - uk-property
                     - foreign-property
                     - property-unspecified
+                  tradingType:
+                    maxLength: 35
+                    minLength: 1
+                    type: string
+                    description: The type of trading carried out by the business.
+                    example: Plastering
                   tradingName:
+                    maxLength: 105
                     type: string
                     description: The trading name of the business.
                     example: ABC Ltd.
@@ -541,9 +555,11 @@ paths:
                     properties:
                       quarterlyPeriodType:
                         type: string
-                        description: The quarterly period type that is being chosen
-                          for the business ID.
-                        example: standard
+                        description: "The quarterly period type that is being chosen\
+                          \ for the business ID. For standard quarters, `quarterlyTypeChoice`\
+                          \ is only returned when the customer has previously selected\
+                          \ calendar quarters, and then switched back to standard."
+                        example: calendar
                         enum:
                         - standard
                         - calendar
@@ -895,9 +911,11 @@ paths:
               properties:
                 quarterlyPeriodType:
                   type: string
-                  description: The quarterly period type that is being set for the
-                    business id.
-                  example: standard
+                  description: "The quarterly period type that is being set for the\
+                    \ business id. For standard quarters, `quarterlyTypeChoice` is\
+                    \ only returned when the customer has previously selected calendar\
+                    \ quarters, and then switched back to standard."
+                  example: calendar
                   enum:
                   - standard
                   - calendar
@@ -2331,7 +2349,14 @@ components:
                 description: A unique identifier for the business income source. Previously
                   known as selfEmploymentId.
                 example: XAIS12345678910
+              tradingType:
+                maxLength: 35
+                minLength: 1
+                type: string
+                description: The type of trading carried out by the business.
+                example: Plastering
               tradingName:
+                maxLength: 105
                 type: string
                 description: The trading name of the business.
                 example: RCDTS
@@ -2371,7 +2396,14 @@ components:
           - uk-property
           - foreign-property
           - property-unspecified
+        tradingType:
+          maxLength: 35
+          minLength: 1
+          type: string
+          description: The type of trading carried out by the business.
+          example: Plastering
         tradingName:
+          maxLength: 105
           type: string
           description: The trading name of the business.
           example: ABC Ltd.
@@ -2449,9 +2481,11 @@ components:
           properties:
             quarterlyPeriodType:
               type: string
-              description: The quarterly period type that is being chosen for the
-                business ID.
-              example: standard
+              description: "The quarterly period type that is being chosen for the\
+                \ business ID. For standard quarters, `quarterlyTypeChoice` is only\
+                \ returned when the customer has previously selected calendar quarters,\
+                \ and then switched back to standard."
+              example: calendar
               enum:
               - standard
               - calendar
@@ -2527,9 +2561,11 @@ components:
       properties:
         quarterlyPeriodType:
           type: string
-          description: The quarterly period type that is being set for the business
-            id.
-          example: standard
+          description: "The quarterly period type that is being set for the business\
+            \ id. For standard quarters, `quarterlyTypeChoice` is only returned when\
+            \ the customer has previously selected calendar quarters, and then switched\
+            \ back to standard."
+          example: calendar
           enum:
           - standard
           - calendar
