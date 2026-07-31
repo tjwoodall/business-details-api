@@ -166,10 +166,17 @@ paths:
                           type: string
                           example: XAIS12345678910
                           pattern: ^X[a-zA-Z0-9]{1}IS[0-9]{11}$
+                        tradingType:
+                          type: string
+                          description: The type of trading carried out by the business.
+                          example: Plastering
+                          minLength: 1
+                          maxLength: 35
                         tradingName:
                           description: The trading name of the business.
                           type: string
                           example: RCDTS
+                          maxLength: 105
                       required:
                         - businessId
                         - typeOfBusiness
@@ -443,10 +450,17 @@ paths:
                       - uk-property
                       - foreign-property
                       - property-unspecified
+                  tradingType:
+                    type: string
+                    description: The type of trading carried out by the business.
+                    example: Plastering
+                    minLength: 1
+                    maxLength: 35
                   tradingName:
                     type: string
                     description: The trading name of the business.
                     example: ABC Ltd.
+                    maxLength: 105
                   yearOfMigration:
                     type: string
                     description: Year of migration.
@@ -525,8 +539,8 @@ paths:
                         enum:
                           - standard
                           - calendar
-                        description: The quarterly period type that is being chosen for the business ID.
-                        example: standard
+                        description: The quarterly period type that is being chosen for the business ID. For standard quarters, `quarterlyTypeChoice` is only returned when the customer has previously selected calendar quarters, and then switched back to standard.
+                        example: calendar
                       taxYearOfChoice:
                         type: string
                         description: The tax year for which the quarterly period type was chosen.
@@ -804,8 +818,8 @@ paths:
               properties:
                 quarterlyPeriodType:
                   type: string
-                  description: The quarterly period type that is being set for the business id.
-                  example: standard
+                  description: The quarterly period type that is being set for the business id. For standard quarters, `quarterlyTypeChoice` is only returned when the customer has previously selected calendar quarters, and then switched back to standard.
+                  example: calendar
                   enum:
                     - standard
                     - calendar
