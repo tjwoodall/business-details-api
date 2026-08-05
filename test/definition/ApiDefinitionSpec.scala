@@ -16,20 +16,20 @@
 
 package definition
 
-import definition.APIStatus.ALPHA
 import play.api.libs.json.Json
 import routing.Version2
 import support.UnitSpec
 
 class ApiDefinitionSpec extends UnitSpec {
 
-  val apiVersion: APIVersion       = APIVersion(Version2, ALPHA, endpointsEnabled = false)
-  val apiDefinition: APIDefinition = APIDefinition("b", "c", "d", Seq("e"), Seq(apiVersion), Some(false))
+  private val apiVersion: APIVersion = APIVersion(Version2, APIStatus.ALPHA, APIAccessType.PUBLIC, endpointsEnabled = false)
+  val apiDefinition: APIDefinition   = APIDefinition("b", "c", "d", Seq("e"), Seq(apiVersion), Some(false))
 
   private val apiVersionJson = Json.parse("""
         {
           "version": "2.0",
           "status": "ALPHA",
+          "access": "PUBLIC",
           "endpointsEnabled": false
         }
       """)
@@ -44,6 +44,7 @@ class ApiDefinitionSpec extends UnitSpec {
             {
               "version": "2.0",
               "status": "ALPHA",
+              "access": "PUBLIC",
               "endpointsEnabled": false
             }
           ],
@@ -62,6 +63,7 @@ class ApiDefinitionSpec extends UnitSpec {
               {
                 "version": "2.0",
                 "status": "ALPHA",
+                "access": "PUBLIC",
                 "endpointsEnabled": false
               }
             ],

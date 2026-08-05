@@ -18,35 +18,26 @@ package definition
 
 import cats.implicits.catsSyntaxValidatedId
 import config.Deprecation.NotDeprecated
-import config.{ConfidenceLevelConfig, MockAppConfig}
+import config.MockAppConfig
 import definition.APIStatus.{ALPHA, BETA, RETIRED}
 import mocks.MockHttpClient
-import play.api.Configuration
 import routing.{Version1, Version2}
 import support.UnitSpec
-import uk.gov.hmrc.auth.core.ConfidenceLevel
 
-class ApiDefinitionFactorySpec extends UnitSpec {
+class ApiDefinitionFactorySpec extends UnitSpec with MockAppConfig {
 
   class Test extends MockHttpClient with MockAppConfig {
     val apiDefinitionFactory = new ApiDefinitionFactory(mockAppConfig)
     MockedAppConfig.apiGatewayContext returns "individuals/business/details"
   }
 
-  private val confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200
-
   "definition" when {
     "called" should {
       "return a valid Definition case class" in new Test {
-        MockedAppConfig.featureSwitches returns Configuration.empty
         MockedAppConfig.apiStatus(Version2) returns "BETA"
+        MockedAppConfig.controlledAccessEnabled.returns(false).twice()
         MockedAppConfig.endpointsEnabled(Version2) returns true
         MockedAppConfig.deprecationFor(Version2).returns(NotDeprecated.valid).anyNumberOfTimes()
-        (MockedAppConfig.confidenceLevelCheckEnabled returns ConfidenceLevelConfig(
-          confidenceLevel = confidenceLevel,
-          definitionEnabled = true,
-          authValidationEnabled = true))
-          .anyNumberOfTimes()
 
         apiDefinitionFactory.definition shouldBe
           Definition(
@@ -59,11 +50,13 @@ class ApiDefinitionFactorySpec extends UnitSpec {
                 APIVersion(
                   version = Version1,
                   status = RETIRED,
+                  access = APIAccessType.PUBLIC,
                   endpointsEnabled = false
                 ),
                 APIVersion(
                   version = Version2,
                   status = BETA,
+                  access = APIAccessType.PUBLIC,
                   endpointsEnabled = true
                 )
               ),
@@ -106,6 +99,31 @@ class ApiDefinitionFactorySpec extends UnitSpec {
 
       val exceptionMessage: String = exception.getMessage
       exceptionMessage shouldBe "deprecatedOn date is required for a deprecated version"
+    }
+  }
+
+  "set the access level" when {
+    "the controlled access flag is enabled" should {
+      "to be CONTROLLED" in new Test {
+        MockedAppConfig.endpointsEnabled(Version2)
+        MockedAppConfig.apiStatus(Version2) returns "BETA"
+        MockedAppConfig.deprecationFor(Version2).returns(NotDeprecated.valid).anyNumberOfTimes()
+        MockedAppConfig.controlledAccessEnabled.returns(true).twice()
+
+        apiDefinitionFactory.definition.api.versions.last.access shouldBe APIAccessType.CONTROLLED
+      }
+    }
+
+    "the controlled access flag is disabled" should {
+      "return PUBLIC" in new Test {
+        MockedAppConfig.endpointsEnabled(Version2)
+        MockedAppConfig.apiStatus(Version2) returns "BETA"
+        MockedAppConfig.deprecationFor(Version2).returns(NotDeprecated.valid).anyNumberOfTimes()
+
+        MockedAppConfig.controlledAccessEnabled.returns(false).twice()
+
+        apiDefinitionFactory.definition.api.versions.head.access shouldBe APIAccessType.PUBLIC
+      }
     }
   }
 
