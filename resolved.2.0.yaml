@@ -465,6 +465,7 @@ paths:
                   typeOfBusiness:
                     type: string
                     description: The type of business income source.
+                    example: self-employment
                     enum:
                     - self-employment
                     - uk-property
@@ -485,23 +486,23 @@ paths:
                     pattern: "^(\\d{4})$"
                     type: string
                     description: Year of migration.
-                    format: yyyy
+                    format: YYYY
                     example: "2022"
                   firstAccountingPeriodStartDate:
                     type: string
                     description: |-
-                      The first accounting period start date.
+                      The first accounting period start date. Must conform to the format `YYYY-MM-DD`
 
                       Note: <b>Accounting period start and end dates should not be displayed to users of your software.</b>
-                    format: yyyy-MM-DD
+                    format: date
                     example: 2019-09-30
                   firstAccountingPeriodEndDate:
                     type: string
                     description: |-
-                      The first accounting period end date.
+                      The first accounting period end date. Must conform to the format `YYYY-MM-DD`
 
                       Note: <b>Accounting period start and end dates should not be displayed to users of your software.</b>
-                    format: yyyy-MM-DD
+                    format: date
                     example: 2020-02-29
                   latencyDetails:
                     required:
@@ -515,18 +516,17 @@ paths:
                       latencyEndDate:
                         type: string
                         description: End date of latency period for the income source.
-                        format: YYYY-MM-DD
+                          Must conform to the format `YYYY-MM-DD`
+                        format: date
                         example: 2020-02-27
                       taxYear1:
-                        maximum: 4
-                        minimum: 4
+                        maxLength: 7
+                        minLength: 7
                         type: string
                         description: First tax year for the income source.
                         format: YYYY-YY
                         example: 2018-19
                       latencyIndicator1:
-                        maximum: 1
-                        minimum: 1
                         type: string
                         description: Self assessment submission frequency.
                         example: A
@@ -534,23 +534,25 @@ paths:
                         - A
                         - Q
                       taxYear2:
-                        maximum: 4
-                        minimum: 4
+                        maxLength: 7
+                        minLength: 7
                         type: string
                         description: Second tax year for the income source.
                         format: YYYY-YY
                         example: 2019-20
                       latencyIndicator2:
-                        maximum: 1
-                        minimum: 1
                         type: string
                         description: Self assessment submission frequency.
                         example: A
                         enum:
                         - A
                         - Q
+                    additionalProperties: false
                     description: Income source latency details.
                   quarterlyTypeChoice:
+                    required:
+                    - quarterlyPeriodType
+                    - taxYearOfChoice
                     type: object
                     properties:
                       quarterlyPeriodType:
@@ -569,6 +571,7 @@ paths:
                         description: The tax year for which the quarterly period type
                           was chosen.
                         example: 2023-24
+                    additionalProperties: false
                     description: Quarterly reporting period type.
                   accountingPeriods:
                     type: array
@@ -585,41 +588,59 @@ paths:
                         start:
                           type: string
                           description: Date your books or accounts start - the beginning
-                            of your accounting period.
+                            of your accounting period. Must conform to the format
+                            `YYYY-MM-DD`
+                          format: date
                           example: 2018-04-06
                         end:
                           type: string
                           description: Date your books or accounts are made up to
-                            - the end of your accounting period.
+                            - the end of your accounting period. Must conform to the
+                            format `YYYY-MM-DD`
+                          format: date
                           example: 2019-04-05
                       additionalProperties: false
                   commencementDate:
                     type: string
-                    description: "Business start date, must be in the past."
+                    description: "Business start date, must be in the past. Must conform\
+                      \ to the format `YYYY-MM-DD`"
+                    format: date
                     example: 2016-09-24
                   cessationDate:
                     type: string
-                    description: Business cessation date.
+                    description: Business cessation date. Must conform to the format
+                      `YYYY-MM-DD`
+                    format: date
                     example: 2020-03-24
                   businessAddressLineOne:
+                    maxLength: 35
+                    minLength: 1
                     type: string
                     description: First line of the business address.
                     example: 1 ABC Rd.
                   businessAddressLineTwo:
+                    maxLength: 35
+                    minLength: 1
                     type: string
                     description: Second line of the business address.
                     example: London
                   businessAddressLineThree:
+                    maxLength: 35
+                    minLength: 1
                     type: string
                     description: Third line of the business address.
                     example: Greater London
                   businessAddressLineFour:
+                    maxLength: 35
+                    minLength: 1
                     type: string
                     description: Fourth line of the business address.
                     example: United Kingdom
                   businessAddressPostcode:
+                    maxLength: 10
+                    minLength: 1
                     type: string
-                    description: Business code.
+                    description: Business postcode.
                     example: M1 1AG
                   businessAddressCountryCode:
                     type: string
@@ -2391,6 +2412,7 @@ components:
         typeOfBusiness:
           type: string
           description: The type of business income source.
+          example: self-employment
           enum:
           - self-employment
           - uk-property
@@ -2411,23 +2433,23 @@ components:
           pattern: "^(\\d{4})$"
           type: string
           description: Year of migration.
-          format: yyyy
+          format: YYYY
           example: "2022"
         firstAccountingPeriodStartDate:
           type: string
           description: |-
-            The first accounting period start date.
+            The first accounting period start date. Must conform to the format `YYYY-MM-DD`
 
             Note: <b>Accounting period start and end dates should not be displayed to users of your software.</b>
-          format: yyyy-MM-DD
+          format: date
           example: 2019-09-30
         firstAccountingPeriodEndDate:
           type: string
           description: |-
-            The first accounting period end date.
+            The first accounting period end date. Must conform to the format `YYYY-MM-DD`
 
             Note: <b>Accounting period start and end dates should not be displayed to users of your software.</b>
-          format: yyyy-MM-DD
+          format: date
           example: 2020-02-29
         latencyDetails:
           required:
@@ -2440,19 +2462,18 @@ components:
           properties:
             latencyEndDate:
               type: string
-              description: End date of latency period for the income source.
-              format: YYYY-MM-DD
+              description: End date of latency period for the income source. Must
+                conform to the format `YYYY-MM-DD`
+              format: date
               example: 2020-02-27
             taxYear1:
-              maximum: 4
-              minimum: 4
+              maxLength: 7
+              minLength: 7
               type: string
               description: First tax year for the income source.
               format: YYYY-YY
               example: 2018-19
             latencyIndicator1:
-              maximum: 1
-              minimum: 1
               type: string
               description: Self assessment submission frequency.
               example: A
@@ -2460,23 +2481,25 @@ components:
               - A
               - Q
             taxYear2:
-              maximum: 4
-              minimum: 4
+              maxLength: 7
+              minLength: 7
               type: string
               description: Second tax year for the income source.
               format: YYYY-YY
               example: 2019-20
             latencyIndicator2:
-              maximum: 1
-              minimum: 1
               type: string
               description: Self assessment submission frequency.
               example: A
               enum:
               - A
               - Q
+          additionalProperties: false
           description: Income source latency details.
         quarterlyTypeChoice:
+          required:
+          - quarterlyPeriodType
+          - taxYearOfChoice
           type: object
           properties:
             quarterlyPeriodType:
@@ -2494,6 +2517,7 @@ components:
               type: string
               description: The tax year for which the quarterly period type was chosen.
               example: 2023-24
+          additionalProperties: false
           description: Quarterly reporting period type.
         accountingPeriods:
           type: array
@@ -2510,41 +2534,56 @@ components:
               start:
                 type: string
                 description: Date your books or accounts start - the beginning of
-                  your accounting period.
+                  your accounting period. Must conform to the format `YYYY-MM-DD`
+                format: date
                 example: 2018-04-06
               end:
                 type: string
                 description: Date your books or accounts are made up to - the end
-                  of your accounting period.
+                  of your accounting period. Must conform to the format `YYYY-MM-DD`
+                format: date
                 example: 2019-04-05
             additionalProperties: false
         commencementDate:
           type: string
-          description: "Business start date, must be in the past."
+          description: "Business start date, must be in the past. Must conform to\
+            \ the format `YYYY-MM-DD`"
+          format: date
           example: 2016-09-24
         cessationDate:
           type: string
-          description: Business cessation date.
+          description: Business cessation date. Must conform to the format `YYYY-MM-DD`
+          format: date
           example: 2020-03-24
         businessAddressLineOne:
+          maxLength: 35
+          minLength: 1
           type: string
           description: First line of the business address.
           example: 1 ABC Rd.
         businessAddressLineTwo:
+          maxLength: 35
+          minLength: 1
           type: string
           description: Second line of the business address.
           example: London
         businessAddressLineThree:
+          maxLength: 35
+          minLength: 1
           type: string
           description: Third line of the business address.
           example: Greater London
         businessAddressLineFour:
+          maxLength: 35
+          minLength: 1
           type: string
           description: Fourth line of the business address.
           example: United Kingdom
         businessAddressPostcode:
+          maxLength: 10
+          minLength: 1
           type: string
-          description: Business code.
+          description: Business postcode.
           example: M1 1AG
         businessAddressCountryCode:
           type: string
