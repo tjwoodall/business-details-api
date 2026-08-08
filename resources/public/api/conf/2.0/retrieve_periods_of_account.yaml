@@ -46,11 +46,9 @@ responses:
           $ref: './schemas/retrievePeriodsOfAccount/response.json'
         examples:
           Example response when periodsOfAccount is true:
-            value:
-              $ref: './examples/retrievePeriodsOfAccount/periodOfAccountTrueResponse.json'
+            externalValue: './examples/retrievePeriodsOfAccount/periodOfAccountTrueResponse.json'
           Example response when periodsOfAccount is false:
-            value:
-              $ref: './examples/retrievePeriodsOfAccount/periodOfAccountFalseResponse.json'
+            externalValue: './examples/retrievePeriodsOfAccount/periodOfAccountFalseResponse.json'
 
   "400":
     description: Bad request
