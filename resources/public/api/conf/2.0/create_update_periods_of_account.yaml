@@ -37,11 +37,9 @@ requestBody:
         $ref: './schemas/createUpdatePeriodsOfAccount/request.json'
       examples:
         Example request when periodsOfAccount is true:
-          value:
-            $ref: './examples/createUpdatePeriodsOfAccount/periodOfAccountTrueRequest.json'
+          externalValue: './examples/createUpdatePeriodsOfAccount/periodOfAccountTrueRequest.json'
         Example request when periodsOfAccount is false:
-          value:
-            $ref: './examples/createUpdatePeriodsOfAccount/periodOfAccountFalseRequest.json'
+          externalValue: './examples/createUpdatePeriodsOfAccount/periodOfAccountFalseRequest.json'
 
 responses:
   "204":
