@@ -482,12 +482,6 @@ paths:
                     type: string
                     description: The trading name of the business.
                     example: ABC Ltd.
-                  yearOfMigration:
-                    pattern: "^(\\d{4})$"
-                    type: string
-                    description: Year of migration.
-                    format: YYYY
-                    example: "2022"
                   firstAccountingPeriodStartDate:
                     type: string
                     description: |-
@@ -2429,12 +2423,6 @@ components:
           type: string
           description: The trading name of the business.
           example: ABC Ltd.
-        yearOfMigration:
-          pattern: "^(\\d{4})$"
-          type: string
-          description: Year of migration.
-          format: YYYY
-          example: "2022"
         firstAccountingPeriodStartDate:
           type: string
           description: |-
