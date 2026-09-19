@@ -462,12 +462,6 @@ paths:
                     description: The trading name of the business.
                     example: ABC Ltd.
                     maxLength: 105
-                  yearOfMigration:
-                    type: string
-                    description: Year of migration.
-                    pattern: ^(\d{4})$
-                    format: YYYY
-                    example: '2022'
                   firstAccountingPeriodStartDate:
                     type: string
                     description: |-
