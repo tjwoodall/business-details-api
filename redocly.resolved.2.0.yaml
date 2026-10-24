@@ -496,7 +496,7 @@ paths:
                         maxLength: 7
                       latencyIndicator1:
                         type: string
-                        description: Self assessment submission frequency.
+                        description: '''A'' indicates latency applies for the specified tax year. ''Q'' indicates latency does not apply for the specified tax year.'
                         enum:
                           - A
                           - Q
@@ -510,7 +510,7 @@ paths:
                         maxLength: 7
                       latencyIndicator2:
                         type: string
-                        description: Self assessment submission frequency.
+                        description: '''A'' indicates latency applies for the specified tax year. ''Q'' indicates latency does not apply for the specified tax year.'
                         enum:
                           - A
                           - Q
