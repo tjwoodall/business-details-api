@@ -522,7 +522,9 @@ paths:
                         example: 2018-19
                       latencyIndicator1:
                         type: string
-                        description: Self assessment submission frequency.
+                        description: '''A'' indicates latency applies for the specified
+                          tax year. ''Q'' indicates latency does not apply for the
+                          specified tax year.'
                         example: A
                         enum:
                         - A
@@ -536,7 +538,9 @@ paths:
                         example: 2019-20
                       latencyIndicator2:
                         type: string
-                        description: Self assessment submission frequency.
+                        description: '''A'' indicates latency applies for the specified
+                          tax year. ''Q'' indicates latency does not apply for the
+                          specified tax year.'
                         example: A
                         enum:
                         - A
@@ -2463,7 +2467,9 @@ components:
               example: 2018-19
             latencyIndicator1:
               type: string
-              description: Self assessment submission frequency.
+              description: '''A'' indicates latency applies for the specified tax
+                year. ''Q'' indicates latency does not apply for the specified tax
+                year.'
               example: A
               enum:
               - A
@@ -2477,7 +2483,9 @@ components:
               example: 2019-20
             latencyIndicator2:
               type: string
-              description: Self assessment submission frequency.
+              description: '''A'' indicates latency applies for the specified tax
+                year. ''Q'' indicates latency does not apply for the specified tax
+                year.'
               example: A
               enum:
               - A
