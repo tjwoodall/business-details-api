@@ -837,7 +837,7 @@ paths:
               example-request:
                 description: Example request given any tax year
                 value:
-                  $ref: ./examples/createAmendQuarterlyPeriodType/def1/request.json
+                  $ref: ./examples/createAmendQuarterlyPeriodType/request.json
       responses:
         '204':
           description: Success(No Content)
