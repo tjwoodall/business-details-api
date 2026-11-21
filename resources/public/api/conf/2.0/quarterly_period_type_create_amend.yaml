@@ -39,8 +39,7 @@ put:
         examples:
           example-request:
             description: Example request given any tax year
-            value:
-              $ref: './examples/createAmendQuarterlyPeriodType/request.json'
+            externalValue: './examples/createAmendQuarterlyPeriodType/request.json'
 
   responses:
     "204":
